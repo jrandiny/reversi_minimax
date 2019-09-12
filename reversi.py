@@ -40,3 +40,33 @@ def cetakPapan(papan):
         print("|")
         print(GARISV)
         print(GARISH)
+
+
+def buatPapanKosong(dim):
+    # Fungsi untuk membuat papan kosong sesuai ukuran dimensi
+    return [[" "] * dim for i in range(dim)]
+
+
+def resetPapanReversi(papan):
+    # Prosedur untuk membuat papan yang ada menjadi papan reversi standar
+    # I.S. papan terdefinisi sebagai matrik persegi dengan
+    #      panjang sisi genap dan >= 2
+    # F.S. papan menjadi papan reversi standar dengan x = hitam, o = putih
+    #      terletak di tengah papan
+
+    # Mengosongkan papan
+    for row in papan:
+        for col in row:
+            col = " "
+    dim = len(papan)
+    mid = int((dim/2)-1)
+    # Menge-set kondisi awal reversi
+    papan[mid][mid] = papan[mid+1][mid+1] = "x"
+    papan[mid+1][mid] = papan[mid][mid+1] = "o"
+
+
+if __name__ == "__main__":
+    # main program
+    papan = buatPapanKosong(DIM)
+    resetPapanReversi(papan)
+    cetakPapan(papan)
