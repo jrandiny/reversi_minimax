@@ -11,6 +11,13 @@ DIM = 8  # dimensi global papan yang digunakan
 HITAM = "x"  # konstan yang melambangkan hitam, jalan pertama
 PUTIH = "o"  # konstan yang melambangkan putih
 KOSONG = " "  # konstan yang melambangkan petka kosong
+ARAH = [[0, -1], [1, -1], [1, 0], [1, 1], [0, 1], [-1, 1],
+        [-1, 0], [-1, -1]]  # arah yang dicek dari sebuah posisi
+'''
+    -1,-1   0,-1    1,-1
+    -1, 0   0, 0    1, 0
+    -1, 1   0, 1    1, 1
+'''
 
 
 def cetakPapan(papan):
@@ -65,13 +72,113 @@ def resetPapanReversi(papan):
             col = KOSONG
     dim = len(papan)
     mid = int((dim/2)-1)
-    # Menge-set kondisi awal reversi
+    # menetapkan kondisi awal reversi
     papan[mid][mid] = papan[mid+1][mid+1] = PUTIH
     papan[mid+1][mid] = papan[mid][mid+1] = HITAM
+
+
+def dalamPapan(x, y):
+    # Fungsi untuk memeriksa apakah indeks x dan y ada dalam jangkauan papan
+    return x >= 0 and x <= DIM - 1 and y >= 0 and y <= DIM-1
+
+
+def negasiGiliran(giliran):
+    # Fungsi yang mengembalikan lawan dari giliran sekarang
+    if giliran == HITAM:
+        lawan = PUTIH
+    else:
+        # giliran putih
+        lawan = HITAM
+    return lawan
+
+
+def cekGerakanValid(papan, giliran, posX, posY):
+    # Fungsi untuk memeriksa apakah langkah pada posX dan posY adalah valid pada giliran "giliran"
+    # Mengembalikan false jika tidak valid atau posisi disk yang bersebarangan jika true
+    if (not dalamPapan(posX, posY) or papan[posY][posX] != KOSONG):
+        # print(1)
+        return False
+    else:
+        # posisi di dalam papan dan petak dalam keadaan kosong
+        papan[posY][posX] = giliran  # set sementara untuk pemeriksaan
+        lawan = negasiGiliran(giliran)
+        lokasi = []
+        for arahX, arahY in ARAH:
+            # cek pada semua arah
+            x, y = posX, posY
+            x += arahX
+            y += arahY
+            if not dalamPapan(x, y):
+                continue
+            else:
+                # masih dalam papan
+                if papan[y][x] == lawan:
+                    # sebelah pertama harus lawan
+                    while papan[y][x] == lawan:
+                        x += arahX
+                        y += arahY
+                        if not dalamPapan(x, y):
+                            break
+                    if dalamPapan(x, y):
+                        # x,y masih dalam papan
+                        if papan[y][x] == giliran:
+                            # menemukan seberangnya
+                            lokasi.append([x, y])
+        papan[posY][posX] = KOSONG  # dikosongkan kembali
+        if len(lokasi) == 0:
+            # tidak ada disk di seberang
+            return False
+        else:
+            # ada disk di seberang
+            return lokasi
+
+
+def revers(papan, giliran, lokasi, posX, posY):
+    # Prosedur untuk membalikan semua disk dari posX, posY
+    #       sampai semua titik di lokasi
+    # I.S. papan, giliran, lokasi, posX, dan posY terdefinisi,
+    #       posX an posY adalah posisi yang valid
+    # F.S. semua disk dari posX, posY hingga semua titik di lokasi dibalik
+    #       berlawanan dengan giliran
+    lawan = negasiGiliran(giliran)
+    papan[posY][posX] = giliran
+    for akhirX, akhirY in lokasi:
+        x, y = posX, posY
+        arahX = int(akhirX - posX)
+        arahY = int(akhirY - posY)
+        # print(arahX, " ", arahY)
+        if arahX != 0:
+            arahX //= abs(arahX)
+        if arahY != 0:
+            arahY //= abs(arahY)
+        # print(arahX, " ", arahY)
+        x += arahX
+        y += arahY
+        # print(x, " ", y)
+        while papan[y][x] == lawan:
+            papan[y][x] = giliran
+            x += arahX
+            y += arahY
 
 
 if __name__ == "__main__":
     # main program
     papan = buatPapanKosong(DIM)
     resetPapanReversi(papan)
-    cetakPapan(papan)
+    giliran = HITAM
+    # print(papan)
+    while True:
+        cetakPapan(papan)
+        print("Sekarang giliran "+giliran)
+        langkah = input("langkah: ").split()
+        x = int(langkah[0])-1
+        y = int(langkah[1])-1
+        # print(f"x: {x},y: {y}")
+        lokasi = cekGerakanValid(papan, giliran, x, y)
+        if lokasi != False:
+            print(lokasi)
+            revers(papan, giliran, lokasi, x, y)
+        else:
+            print("tidak valid")
+        # cetakPapan(papan)
+        giliran = negasiGiliran(giliran)
