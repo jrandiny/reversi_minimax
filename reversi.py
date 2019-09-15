@@ -180,6 +180,18 @@ def papanBerhint(papan, giliran):
     return salinan
 
 
+def hitungSkor(papan):
+    # Fungsi yang mengembalikan skor pada papan dalam map
+    nHitam = nPutih = 0
+    for row in papan:
+        for col in row:
+            if col == HITAM:
+                nHitam += 1
+            elif col == PUTIH:
+                nPutih += 1
+    return {HITAM: nHitam, PUTIH: nPutih}
+
+
 if __name__ == "__main__":
     # main program
     papan = buatPapanKosong(DIM)
@@ -192,9 +204,14 @@ if __name__ == "__main__":
         else:
             cetakPapan(papanBerhint(papan, giliran))
         print("Sekarang giliran "+giliran)
+        skor = hitungSkor(papan)
+        print(
+            f"Skor sekarang {HITAM}: {skor[HITAM]}, {PUTIH}: {skor[PUTIH]}")
         masukan = input("masukan: ")
         if masukan == "hint":
             hint = not hint
+        elif masukan == "quit":
+            break
         else:
             langkah = masukan.split()
             if len(langkah) < 2 or len(langkah) > 2:
