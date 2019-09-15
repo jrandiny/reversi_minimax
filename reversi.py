@@ -135,15 +135,14 @@ def revers(papan, giliran, lokasi, posX, posY):
         x, y = posX, posY
         arahX = int(akhirX - posX)
         arahY = int(akhirY - posY)
-        # print(arahX, " ", arahY)
+        # ubah ke arah satuan
         if arahX != 0:
             arahX //= abs(arahX)
         if arahY != 0:
             arahY //= abs(arahY)
-        # print(arahX, " ", arahY)
         x += arahX
         y += arahY
-        # print(x, " ", y)
+        # balikan semua disk yang lawan
         while papan[y][x] == lawan:
             papan[y][x] = giliran
             x += arahX
@@ -192,6 +191,38 @@ def hitungSkor(papan):
     return {HITAM: nHitam, PUTIH: nPutih}
 
 
+def validasiMasukan(papan, giliran):
+    # Prosedur yang mengatur input pada saat giliran "giliran"
+    # I.S. papan dan giliran terdefinisi
+    # F.S. mengembalikan input hint/ quit/
+    #       titik disk yang diterima yang valid untuk gerakan dan titik seberangnya
+    valid = False
+    while not valid:
+        masukan = input("masukan: ").lower()
+        if masukan in HINTKEY:
+            return "hint"
+        elif masukan in QUITKEY:
+            return "quit"
+        else:
+            titik = masukan.split()
+            if len(titik) == 2:
+                if titik[0].isdigit() and titik[1].isdigit():
+                    # kedua input adalah integer
+                    x = int(titik[0]) - 1
+                    y = int(titik[1]) - 1
+                    lokasi = cekGerakanValid(papan, giliran, x, y)
+                    if lokasi != False:
+                        # titik yang valid
+                        valid = True
+                    else:
+                        print("titik tidak valid")
+                else:
+                    print("masukan koordinat angka")
+            else:
+                print("input tidak valid")
+    return {"x": x, "y": y, "lokasi": lokasi}
+
+
 if __name__ == "__main__":
     # main program
     papan = buatPapanKosong(DIM)
@@ -207,24 +238,15 @@ if __name__ == "__main__":
         skor = hitungSkor(papan)
         print(
             f"Skor sekarang {HITAM}: {skor[HITAM]}, {PUTIH}: {skor[PUTIH]}")
-        masukan = input("masukan: ")
+        masukan = validasiMasukan(papan, giliran)
+        # masukan pasti valid
         if masukan == "hint":
             hint = not hint
         elif masukan == "quit":
             break
         else:
-            langkah = masukan.split()
-            if len(langkah) < 2 or len(langkah) > 2:
-                print("input salah")
-            else:
-                x = int(langkah[0])-1
-                y = int(langkah[1])-1
-                # print(f"x: {x},y: {y}")
-                lokasi = cekGerakanValid(papan, giliran, x, y)
-                if lokasi != False:
-                    print(lokasi)
-                    revers(papan, giliran, lokasi, x, y)
-                else:
-                    print("tidak valid")
-                # cetakPapan(papan)
-                giliran = lawanGiliran(giliran)
+            x = masukan["x"]
+            y = masukan["y"]
+            lokasi = masukan["lokasi"]
+            revers(papan, giliran, lokasi, x, y)
+            giliran = lawanGiliran(giliran)
