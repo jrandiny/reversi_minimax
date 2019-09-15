@@ -281,7 +281,7 @@ def gerakanRandom(papan, giliran):
     x = terpilih[0]
     y = terpilih[1]
     lokasi = cekGerakanValid(papan, giliran, x, y)
-    bergerak(papan, giliran, x, y, lokasi)
+    return {"x": x, "y": y, "lokasi": lokasi}
 
 
 if __name__ == "__main__":
@@ -291,6 +291,7 @@ if __name__ == "__main__":
     giliran = HITAM
     hint = False
     play = True
+    turn = 1  # menyatakan giliran sekarang
     while play:
         print()
         if not hint:
@@ -300,18 +301,31 @@ if __name__ == "__main__":
         print("Sekarang giliran "+giliran)
         skor = hitungSkor(papan)
         cetakSkor(skor[HITAM], skor[PUTIH])
-        masukan = validasiMasukan(papan, giliran)
-        # masukan pasti valid
-        if masukan == "hint":
-            hint = not hint
-        elif masukan == "quit":
-            play = False
+        if (turn % 2 == 1):
+            # turn ganjil = player
+            masukan = validasiMasukan(papan, giliran)
+            # masukan pasti valid
+            if masukan == "hint":
+                hint = not hint
+            elif masukan == "quit":
+                play = False
+            else:
+                if not bergerak(papan, giliran, masukan["x"], masukan["y"], masukan["lokasi"]):
+                    # permainan selesai
+                    play = False
+                else:
+                    giliran = lawanGiliran(giliran)
+                    turn += 1
         else:
+            # turn genap = bot
+            masukan = gerakanRandom(papan, giliran)
+            print(f"bot bergerak [{masukan['x']+1},{masukan['y']+1}]")
             if not bergerak(papan, giliran, masukan["x"], masukan["y"], masukan["lokasi"]):
                 # permainan selesai
                 play = False
             else:
                 giliran = lawanGiliran(giliran)
+                turn += 1
     if masukan != "quit":
         print("\npermainan berkahir")
         cetakPapan(papan)
