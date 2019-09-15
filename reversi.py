@@ -4,7 +4,6 @@
 # Support   : Python reversi engine module, command base
 # Interface : gtk
 
-import sys
 from math import log10
 from constant import *
 
@@ -191,6 +190,22 @@ def hitungSkor(papan):
     return {HITAM: nHitam, PUTIH: nPutih}
 
 
+def bergerak(papan, giliran, posX, posY, lokasi):
+    # Prosedur yang dijalankan untuk bergerak
+    # I.S. semua parameter terdefinisi, posX posY adalah lokasi yang valid
+    # F.S. terjadi gerakan di posX posY, jika permainan berakhir kembalikan feedback false
+    #       jika tidak kembalikan feedback true
+    revers(papan, giliran, lokasi, posX, posY)
+    giliran = lawanGiliran(giliran)
+    if isFinish(papan, giliran):
+        print("permainan berkahir")
+        cetakPapan(papan)
+        cetakSkor(papan)
+        return False
+    else:
+        return True
+
+
 def validasiMasukan(papan, giliran):
     # Prosedur yang mengatur input pada saat giliran "giliran"
     # I.S. papan dan giliran terdefinisi
@@ -223,30 +238,54 @@ def validasiMasukan(papan, giliran):
     return {"x": x, "y": y, "lokasi": lokasi}
 
 
+def isFinish(papan, giliran):
+    # Fungsi yang mengembalikan nilai True jika permainan berakhir dan False jika tidak
+    skor = hitungSkor(papan)
+    gerakan = gerakanTersedia(papan, giliran)
+    totalPetak = len(papan)**2
+    if totalPetak - (skor[HITAM] + skor[PUTIH]) == 0:
+        # tidak kotak lagi
+        return True
+    elif len(gerakan) == 0:
+        # tidak ada gerakan tersedia
+        return True
+    else:
+        return False
+
+
+def cetakSkor(papan):
+    # Prosedur untuk mencetak skor sekarang ke layar
+    # I.S. papan terdefinisi
+    # F.S. skor tercetak ke layar sesuai kondisi papan
+    skor = hitungSkor(papan)
+    print(f"Skor sekarang {HITAM}: {skor[HITAM]}, {PUTIH}: {skor[PUTIH]}")
+
+
 if __name__ == "__main__":
     # main program
     papan = buatPapanKosong(DIM)
     resetPapanReversi(papan)
     giliran = HITAM
     hint = False
-    while True:
+    play = True
+    while play:
         if not hint:
             cetakPapan(papan)
         else:
             cetakPapan(papanBerhint(papan, giliran))
         print("Sekarang giliran "+giliran)
-        skor = hitungSkor(papan)
-        print(
-            f"Skor sekarang {HITAM}: {skor[HITAM]}, {PUTIH}: {skor[PUTIH]}")
+        cetakSkor(papan)
         masukan = validasiMasukan(papan, giliran)
         # masukan pasti valid
         if masukan == "hint":
             hint = not hint
         elif masukan == "quit":
-            break
+            print()
+            play = False
         else:
-            x = masukan["x"]
-            y = masukan["y"]
-            lokasi = masukan["lokasi"]
-            revers(papan, giliran, lokasi, x, y)
-            giliran = lawanGiliran(giliran)
+            if not bergerak(papan, giliran, masukan["x"], masukan["y"], masukan["lokasi"]):
+                # permainan selesai
+                play = False
+            else:
+                giliran = lawanGiliran(giliran)
+    print("Terimakasih terlah bermain")
