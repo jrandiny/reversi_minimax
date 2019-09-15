@@ -6,18 +6,7 @@
 
 import sys
 from math import log10
-
-DIM = 8  # dimensi global papan yang digunakan
-HITAM = "x"  # konstan yang melambangkan hitam, jalan pertama
-PUTIH = "o"  # konstan yang melambangkan putih
-KOSONG = " "  # konstan yang melambangkan petka kosong
-ARAH = [[0, -1], [1, -1], [1, 0], [1, 1], [0, 1], [-1, 1],
-        [-1, 0], [-1, -1]]  # arah yang dicek dari sebuah posisi
-'''
-    -1,-1   0,-1    1,-1
-    -1, 0   0, 0    1, 0
-    -1, 1   0, 1    1, 1
-'''
+from constant import *
 
 
 def cetakPapan(papan):
@@ -82,7 +71,7 @@ def dalamPapan(x, y):
     return x >= 0 and x <= DIM - 1 and y >= 0 and y <= DIM-1
 
 
-def negasiGiliran(giliran):
+def lawanGiliran(giliran):
     # Fungsi yang mengembalikan lawan dari giliran sekarang
     if giliran == HITAM:
         lawan = PUTIH
@@ -101,7 +90,7 @@ def cekGerakanValid(papan, giliran, posX, posY):
     else:
         # posisi di dalam papan dan petak dalam keadaan kosong
         papan[posY][posX] = giliran  # set sementara untuk pemeriksaan
-        lawan = negasiGiliran(giliran)
+        lawan = lawanGiliran(giliran)
         lokasi = []
         for arahX, arahY in ARAH:
             # cek pada semua arah
@@ -140,7 +129,7 @@ def revers(papan, giliran, lokasi, posX, posY):
     #       posX an posY adalah posisi yang valid
     # F.S. semua disk dari posX, posY hingga semua titik di lokasi dibalik
     #       berlawanan dengan giliran
-    lawan = negasiGiliran(giliran)
+    lawan = lawanGiliran(giliran)
     papan[posY][posX] = giliran
     for akhirX, akhirY in lokasi:
         x, y = posX, posY
@@ -161,24 +150,64 @@ def revers(papan, giliran, lokasi, posX, posY):
             y += arahY
 
 
+def copyPapan(papan):
+    # Fungsi yang mengembalikan salinan dari papan masukan
+    copy = buatPapanKosong(len(papan))
+
+    for row in range(len(papan)):
+        for col in range(len(papan)):
+            copy[row][col] = papan[row][col]
+    return copy
+
+
+def gerakanTersedia(papan, giliran):
+    # Fungsi yang menghasilkan semua titik gerakan yang mungkin dilakukan pada giliran "giliran"
+    tersedia = []
+    for y in range(len(papan)):
+        for x in range(len(papan)):
+            if cekGerakanValid(papan, giliran, x, y) != False:
+                tersedia.append([x, y])
+    return tersedia
+
+
+def papanBerhint(papan, giliran):
+    # Fungsi yang mengembalikan papan dengan hint yang diberikan
+    #       bagi giliran "giliran"
+    salinan = copyPapan(papan)
+
+    for x, y in gerakanTersedia(papan, giliran):
+        salinan[y][x] = HINT
+    return salinan
+
+
 if __name__ == "__main__":
     # main program
     papan = buatPapanKosong(DIM)
     resetPapanReversi(papan)
     giliran = HITAM
-    # print(papan)
+    hint = False
     while True:
-        cetakPapan(papan)
-        print("Sekarang giliran "+giliran)
-        langkah = input("langkah: ").split()
-        x = int(langkah[0])-1
-        y = int(langkah[1])-1
-        # print(f"x: {x},y: {y}")
-        lokasi = cekGerakanValid(papan, giliran, x, y)
-        if lokasi != False:
-            print(lokasi)
-            revers(papan, giliran, lokasi, x, y)
+        if not hint:
+            cetakPapan(papan)
         else:
-            print("tidak valid")
-        # cetakPapan(papan)
-        giliran = negasiGiliran(giliran)
+            cetakPapan(papanBerhint(papan, giliran))
+        print("Sekarang giliran "+giliran)
+        masukan = input("masukan: ")
+        if masukan == "hint":
+            hint = not hint
+        else:
+            langkah = masukan.split()
+            if len(langkah) < 2 or len(langkah) > 2:
+                print("input salah")
+            else:
+                x = int(langkah[0])-1
+                y = int(langkah[1])-1
+                # print(f"x: {x},y: {y}")
+                lokasi = cekGerakanValid(papan, giliran, x, y)
+                if lokasi != False:
+                    print(lokasi)
+                    revers(papan, giliran, lokasi, x, y)
+                else:
+                    print("tidak valid")
+                # cetakPapan(papan)
+                giliran = lawanGiliran(giliran)
