@@ -4,6 +4,7 @@
 # Support   : Python reversi engine module, command base
 # Interface : gtk
 
+import random
 from math import log10
 from constant import *
 
@@ -268,6 +269,19 @@ def validasiMasukan(papan, giliran):
             else:
                 print("input tidak valid")
     return {"x": x, "y": y, "lokasi": lokasi}
+
+
+def gerakanRandom(papan, giliran):
+    # Prosedur untuk melakukan gerakan random pada giliran "giliran"
+    # I.S. papan dan giliran terdefinisi
+    # F.S. dilakukan gerakan random pada papan
+    gerakan = gerakanTersedia(papan, giliran)
+    random.shuffle(gerakan)
+    terpilih = gerakan[0]
+    x = terpilih[0]
+    y = terpilih[1]
+    lokasi = cekGerakanValid(papan, giliran, x, y)
+    bergerak(papan, giliran, x, y, lokasi)
 
 
 if __name__ == "__main__":
