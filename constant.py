@@ -9,4 +9,8 @@ ARAH = [[0, -1], [1, -1], [1, 0], [1, 1], [0, 1], [-1, 1],
     -1, 0   0, 0    1, 0
     -1, 1   0, 1    1, 1
 '''
-HINT = "*"
+HINT = "*"  # konstan untuk melambangkan hint
+
+# masukan yang valid
+HINTKEY = ["hint", "h"]
+QUITKEY = ["quit", "q", "x"]
