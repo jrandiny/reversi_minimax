@@ -190,6 +190,41 @@ def hitungSkor(papan):
     return {HITAM: nHitam, PUTIH: nPutih}
 
 
+def isFinish(papan, giliran):
+    # Fungsi yang mengembalikan nilai True jika permainan berakhir dan False jika tidak
+    skor = hitungSkor(papan)
+    gerakan = gerakanTersedia(papan, giliran)
+    totalPetak = len(papan)**2
+    if totalPetak - (skor[HITAM] + skor[PUTIH]) == 0:
+        # tidak kotak lagi
+        return True
+    elif len(gerakan) == 0:
+        # tidak ada gerakan tersedia
+        return True
+    else:
+        return False
+
+
+def cetakSkor(nHitam, nPutih):
+    # Prosedur untuk mencetak skor sekarang ke layar
+    # I.S. skor terdefinisi
+    # F.S. skor tercetak ke layar sesuai kondisi papan
+    print(f"Skor sekarang {HITAM}: {nHitam}, {PUTIH}: {nPutih}")
+
+
+def tentukanPemenang(nHitam, nPutih):
+    # Fungsi yang mengebalikan pemenang berdasarkan skor
+    if nHitam > nPutih:
+        # hitam menang
+        return HITAM
+    elif nHitam < nPutih:
+        # putih menang
+        return PUTIH
+    else:
+        # seri
+        return "draw"
+
+
 def bergerak(papan, giliran, posX, posY, lokasi):
     # Prosedur yang dijalankan untuk bergerak
     # I.S. semua parameter terdefinisi, posX posY adalah lokasi yang valid
@@ -198,9 +233,6 @@ def bergerak(papan, giliran, posX, posY, lokasi):
     revers(papan, giliran, lokasi, posX, posY)
     giliran = lawanGiliran(giliran)
     if isFinish(papan, giliran):
-        print("permainan berkahir")
-        cetakPapan(papan)
-        cetakSkor(papan)
         return False
     else:
         return True
@@ -238,29 +270,6 @@ def validasiMasukan(papan, giliran):
     return {"x": x, "y": y, "lokasi": lokasi}
 
 
-def isFinish(papan, giliran):
-    # Fungsi yang mengembalikan nilai True jika permainan berakhir dan False jika tidak
-    skor = hitungSkor(papan)
-    gerakan = gerakanTersedia(papan, giliran)
-    totalPetak = len(papan)**2
-    if totalPetak - (skor[HITAM] + skor[PUTIH]) == 0:
-        # tidak kotak lagi
-        return True
-    elif len(gerakan) == 0:
-        # tidak ada gerakan tersedia
-        return True
-    else:
-        return False
-
-
-def cetakSkor(papan):
-    # Prosedur untuk mencetak skor sekarang ke layar
-    # I.S. papan terdefinisi
-    # F.S. skor tercetak ke layar sesuai kondisi papan
-    skor = hitungSkor(papan)
-    print(f"Skor sekarang {HITAM}: {skor[HITAM]}, {PUTIH}: {skor[PUTIH]}")
-
-
 if __name__ == "__main__":
     # main program
     papan = buatPapanKosong(DIM)
@@ -269,18 +278,19 @@ if __name__ == "__main__":
     hint = False
     play = True
     while play:
+        print()
         if not hint:
             cetakPapan(papan)
         else:
             cetakPapan(papanBerhint(papan, giliran))
         print("Sekarang giliran "+giliran)
-        cetakSkor(papan)
+        skor = hitungSkor(papan)
+        cetakSkor(skor[HITAM], skor[PUTIH])
         masukan = validasiMasukan(papan, giliran)
         # masukan pasti valid
         if masukan == "hint":
             hint = not hint
         elif masukan == "quit":
-            print()
             play = False
         else:
             if not bergerak(papan, giliran, masukan["x"], masukan["y"], masukan["lokasi"]):
@@ -288,4 +298,14 @@ if __name__ == "__main__":
                 play = False
             else:
                 giliran = lawanGiliran(giliran)
+    if masukan != "quit":
+        print("\npermainan berkahir")
+        cetakPapan(papan)
+        skor = hitungSkor(papan)
+        cetakSkor(skor[HITAM], skor[PUTIH])
+        pemenang = tentukanPemenang(skor[HITAM], skor[PUTIH])
+        if pemenang == "draw":
+            print("hasilnya draw")
+        else:
+            print("pemenangnya adalah " + pemenang)
     print("Terimakasih terlah bermain")
