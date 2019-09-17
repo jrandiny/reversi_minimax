@@ -42,6 +42,7 @@ class UIBase(ABC):
 
     def forceQuitUI(self):
         self.inputQueue.put({"type": UIMessageType.QUIT})
+        self.uiThread.join()
 
     def getUICommand(self):
         if (not self.outputQueue.empty()):

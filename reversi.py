@@ -11,35 +11,20 @@ import time
 import sys
 import argparse
 from bot.random_bot import RandomBot
-from bot.human_player import HumanPlayer
 from bot.ai_bot import AIBot
 from bot.bot2 import Bot2
 from ui.console.console import ConsoleUI
 from ui.gui.main import QTUI
+from ui.dummy.dummy import DummyUI
 from ui_base import UICommandType
 
 
-def game(players, board):
+def game(players, board, ui):
     turn = BLACK
-    # hint = False
     play = True
 
-    # players = {}
-    # players[WHITE] = RandomBot()
-    # players[WHITE] = AIBot()
-    # players[WHITE] = Bot2()
-    # # players[WHITE] = HumanPlayer()
-    # # players[BLACK] = HumanPlayer()
-    # players[BLACK] = RandomBot()
-    # players[BLACK] = AIBot()
-    # players[BLACK] = Bot2()
-    # ui = QTUI()
-    ui = ConsoleUI()
-
     while play:
-        # print()
-        # ui.giveNewBoard(board)
-        # time.sleep(1)
+        ui.giveNewBoard(board)
         command = ui.getUICommand()
 
         if (command["type"] == UICommandType.QUIT):
@@ -47,14 +32,14 @@ def game(players, board):
         elif (command["type"] == UICommandType.MOVE):
             print(command["data"])
         else:
-            # ui.giveNewTurn(turn)
-            # score = countScore(board)
-            # ui.giveNewScore(score)
+            ui.giveNewTurn(turn)
+            score = countScore(board)
+            ui.giveNewScore(score)
 
             # Cek apakah bisa jalan
             if (len(getAvailableMove(board, turn)) == 0):
                 turn = nextTurn(turn)
-                # ui.giveForfeitTurn()
+                ui.giveForfeitTurn()
             else:
                 inputValid = False
 
@@ -66,18 +51,6 @@ def game(players, board):
                         turn = nextTurn(turn)
 
             play = not isFinish(board, turn)
-
-    # print("\nPermainan berkahir")
-    # score = countScore(board)
-    # ui.giveNewBoard(board)
-    # ui.giveNewScore(score)
-    # ui.forceQuitUI()
-    # pemenang = getWinner(score[BLACK], score[WHITE])
-    # if pemenang == "draw":
-    #     print("Hasilnya draw")
-    # else:
-    #     print("Pemenangnya adalah " + pemenang)
-    # print("Terimakasih telah bermain")
 
 
 if __name__ == "__main__":
@@ -105,13 +78,20 @@ if __name__ == "__main__":
 
     benchmarkMode = args.loopCount > 1
 
+    if (benchmarkMode):
+        ui = DummyUI()
+    else:
+        # ui = QTUI()
+        ui = ConsoleUI()
+
     for x in range(args.loopCount):
+        board = newBoard(DIM)
+        resetBoard(board)
+
         if (benchmarkMode):
             print("Game {}/{}".format(x + 1, args.loopCount))
 
-        board = newBoard(DIM)
-        resetBoard(board)
-        game(players, board)
+        game(players, board, ui)
 
         score = countScore(board)
         winner = getWinner(score[BLACK], score[WHITE])
@@ -125,7 +105,9 @@ if __name__ == "__main__":
 
     if (not benchmarkMode):
         print("Permainan selesai")
+        ui.forceQuitUI()
     else:
+        ui.forceQuitUI()
         print("")
         print("Mode benchmark selesai")
         print("----------------------")
