@@ -13,14 +13,14 @@ from queue import Queue
 
 
 class Handler(QObject):
-    def __init__(self, moveHandler):
+    def __init__(self, commandQueue):
         super().__init__()
-        self.moveHandler = moveHandler
+        self.commandQueue = commandQueue
 
     @Slot(int)
     def tileClicked(self, index):
         print(index)
-        self.moveHandler.put({
+        self.commandQueue.put({
             "type": UICommandType.MOVE,
             "data": {
                 "x": index % 8,

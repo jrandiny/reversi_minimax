@@ -52,7 +52,7 @@ Rectangle {
                         color: "white"
                         border.color: "black"
                         border.width: 3
-                        radius: 50
+                        radius: width/2
                         anchors.centerIn: parent
                     }
                 back: Rectangle{
@@ -61,7 +61,7 @@ Rectangle {
                     color: "black"
                     border.color: "black"
                     border.width: 3
-                    radius: 50
+                    radius: width/2
                     anchors.centerIn: parent
                 }
 
@@ -98,8 +98,10 @@ Rectangle {
         }
 
         onWidthChanged: {
-            mainWindow.height=mainWindow.width;
-            boardGrid.cellWidth = width/mainWindow.dim;
+            let minSize = mainWindow.height<mainWindow.height?mainWindow.height:mainWindow.width;
+            mainWindow.height=minSize;
+            mainWindow.width=minSize;
+            boardGrid.cellWidth = boardGrid.width/mainWindow.dim;
             boardGrid.cellHeight = cellWidth;            
         }
     }
