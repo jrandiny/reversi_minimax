@@ -1,10 +1,14 @@
 from abc import ABC, abstractmethod
 
 
-class PlayerBase(ABC):
+class BotBase(ABC):
 
     # init
     def init(self):
+        pass
+
+    @abstractmethod
+    def getName(self):
         pass
 
     # Player do some move

@@ -1,9 +1,12 @@
-from player_base import PlayerBase
+from bot_base import BotBase
 from utils import *
 import random
 
 
-class Bot2(PlayerBase):
+class Bot2(BotBase):
+    def getName(self):
+        return "Bot 2"
+
     def doMove(self, board, turn):
         # Given a board and the computer's tile, determine where to
         # move and return that move as a [x, y] list.
@@ -13,13 +16,15 @@ class Bot2(PlayerBase):
         random.shuffle(possibleMoves)
 
         # always go for a corner if available.
-        for x, y in possibleMoves:
-            if self.isOnCorner(x, y):
-                return {"x": x, "y": y}
+        # for x, y in possibleMoves:
+        #     if self.isOnCorner(x, y):
+        #         return {"x": x, "y": y}
 
         # Go through all the possible moves and remember the best scoring move
         bestScore = -1
         for x, y in possibleMoves:
+            if self.isOnCorner(x, y):
+                return {"x": x, "y": y}
             dupeBoard = copyBoard(board)
             makeMove(dupeBoard, turn, x, y)
             score = countScore(dupeBoard)[turn]

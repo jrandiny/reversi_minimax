@@ -1,12 +1,16 @@
-from player_base import PlayerBase
+from bot_base import BotBase
 from utils import *
 
 
-class AIBot(PlayerBase):
+class AIBot(BotBase):
     moveList = []
+    count = 0
 
     def init(self):
         self.moveList = []
+
+    def getName(self):
+        return "Minimax bot"
 
     def doMove(self, board, turn):
         # Prosedur untuk melakukan gerakan random pada giliran "giliran"
@@ -16,11 +20,11 @@ class AIBot(PlayerBase):
         if len(availableMove) == 1:
             move = availableMove[0]
         else:
-            move = self.minimax(board, 3 - 9999, 9999, turn)[1]
+            move = self.minimax(board, 3, -9999, 9999, turn)[1]
         x = move[0]
         y = move[1]
         self.moveList.append([x, y])
-        print(f"bot bergerak [{x+1},{y+1}]")
+        # print(f"bot bergerak [{x+1},{y+1}]")
         return {"x": x, "y": y}
 
     def evaluateState(self, board):
@@ -43,6 +47,7 @@ class AIBot(PlayerBase):
         return {WHITE: valuePutih, BLACK: valueHitam}
 
     def minimax(self, board, depth, alpha, beta, turn):
+        self.count += 1
         availableMove = getAvailableMove(board, turn)
 
         if depth == 0 or len(availableMove) == 0:

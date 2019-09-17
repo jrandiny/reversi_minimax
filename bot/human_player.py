@@ -1,8 +1,8 @@
-from player_base import PlayerBase
+from bot_base import BotBase
 from utils import *
 
 
-class HumanPlayer(PlayerBase):
+class HumanPlayer(BotBase):
     def doMove(self, board, turn):
         # Prosedur yang mengatur input pada saat giliran "giliran"
         # I.S. papan dan giliran terdefinisi
