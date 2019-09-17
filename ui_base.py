@@ -9,6 +9,7 @@ class UIMessageType(Enum):
     BOARD = 1
     TURN = 2
     SCORE = 3
+    FORFEIT = 4
 
 
 class UICommandType(Enum):
@@ -34,6 +35,9 @@ class UIBase(ABC):
     def giveNewScore(self, score):
         self.inputQueue.put({"type": UIMessageType.SCORE, "data": score})
         self.inputQueue.join()
+
+    def giveForfeitTurn(self):
+        self.inputQueue.put({"type": UIMessageType.FORFEIT})
 
     def forceQuitUI(self):
         self.inputQueue.put({"type": UIMessageType.QUIT})

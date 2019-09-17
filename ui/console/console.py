@@ -57,6 +57,8 @@ class ConsoleUI(UIBase):
             elif (io["type"] == UIMessageType.TURN):
                 turn = io["data"]
                 print(f"Sekarang giliran {turn}")
+            elif (io["type"] == UIMessageType.FORFEIT):
+                print("Tidak ada langkah mungkin, skip")
             elif (io["type"] == UIMessageType.QUIT):
                 break
 

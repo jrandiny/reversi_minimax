@@ -18,7 +18,7 @@ class AIBot(PlayerBase):
         posValue = hitungPositionValue(board)
         value = (skor[WHITE] - skor[BLACK]) * 100 + (posValue[WHITE] -
                                                      posValue[BLACK])
-        return {value}
+        return value
 
     def hitungPositionValue(board):
         valuePutih = 0
@@ -43,9 +43,9 @@ class AIBot(PlayerBase):
             for move in availableMove:
                 copy = copyBoard(board)
                 makeMove(copy, turn, move['lokasi'], move['x'], move['y'])
-                eval = minimax(copy, depth - 1, alpha, beta, nextTurn(turn))
-                maxEval = max(maxEval, eval)
-                alpha = max(alpha, eval)
+                value = minimax(copy, depth - 1, alpha, beta, nextTurn(turn))
+                maxEval = max(maxEval, value)
+                alpha = max(alpha, value)
                 if beta <= alpha:
                     break
             return maxEval
@@ -54,9 +54,9 @@ class AIBot(PlayerBase):
             for move in availableMove:
                 copy = copyBoard(board)
                 makeMove(copy, turn, move['lokasi'], move['x'], move['y'])
-                eval = minimax(board, depth - 1, alpha, beta, nextTurn(turn))
-                minEval = min(minEval, eval)
-                beta = min(beta, eval)
+                value = minimax(board, depth - 1, alpha, beta, nextTurn(turn))
+                minEval = min(minEval, value)
+                beta = min(beta, value)
                 if beta <= alpha:
                     break
             return minEval

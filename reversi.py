@@ -40,14 +40,19 @@ if __name__ == "__main__":
             score = countScore(board)
             ui.giveNewScore(score)
 
-            inputValid = False
+            # Cek apakah bisa jalan
+            if (len(getAvailableMove(board, turn)) == 0):
+                turn = nextTurn(turn)
+                ui.giveForfeitTurn()
+            else:
+                inputValid = False
 
-            while not inputValid:
-                masukan = players[turn].doMove(board, turn)
+                while not inputValid:
+                    masukan = players[turn].doMove(board, turn)
 
-                if makeMove(board, turn, masukan["x"], masukan["y"]):
-                    inputValid = True
-                    turn = nextTurn(turn)
+                    if makeMove(board, turn, masukan["x"], masukan["y"]):
+                        inputValid = True
+                        turn = nextTurn(turn)
 
             play = not isFinish(board, turn)
 
