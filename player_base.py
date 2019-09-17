@@ -10,9 +10,5 @@ class PlayerBase(ABC):
     # Player do some move
     # Return tuple of (x,y)
     @abstractmethod
-    def doMove(self):
-        pass
-
-    # Give board to player
-    def setBoard(self):
+    def doMove(self, board, turn):
         pass

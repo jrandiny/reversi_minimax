@@ -145,52 +145,6 @@ def bergerak(papan, giliran, posX, posY, lokasi):
         return True
 
 
-def validasiMasukan(papan, giliran):
-    # Prosedur yang mengatur input pada saat giliran "giliran"
-    # I.S. papan dan giliran terdefinisi
-    # F.S. mengembalikan input hint/ quit/
-    #       titik disk yang diterima yang valid untuk gerakan dan titik seberangnya
-    valid = False
-    while not valid:
-        masukan = input("masukan: ").lower()
-        if masukan in HINTKEY:
-            return "hint"
-        elif masukan in QUITKEY:
-            return "quit"
-        else:
-            titik = masukan.split()
-            if len(titik) == 2:
-                if titik[0].isdigit() and titik[1].isdigit():
-                    # kedua input adalah integer
-                    x = int(titik[0]) - 1
-                    y = int(titik[1]) - 1
-                    lokasi = cekGerakanValid(papan, giliran, x, y)
-                    if lokasi != False:
-                        # titik yang valid
-                        valid = True
-                    else:
-                        print("titik tidak valid")
-                else:
-                    print("masukan koordinat angka")
-            else:
-                print("input tidak valid")
-    return {"x": x, "y": y, "lokasi": lokasi}
-
-
-def gerakanRandom(papan, giliran):
-    # Prosedur untuk melakukan gerakan random pada giliran "giliran"
-    # I.S. papan dan giliran terdefinisi
-    # F.S. dilakukan gerakan random pada papan
-    gerakan = gerakanTersedia(papan, giliran)
-    random.shuffle(gerakan)
-    terpilih = gerakan[0]
-    x = terpilih[0]
-    y = terpilih[1]
-    lokasi = cekGerakanValid(papan, giliran, x, y)
-    print(f"bot bergerak [{masukan['x']+1},{masukan['y']+1}]")
-    return {"x": x, "y": y, "lokasi": lokasi}
-
-
 if __name__ == "__main__":
     # main program
     papan = buatPapanKosong(DIM)
@@ -198,9 +152,9 @@ if __name__ == "__main__":
     giliran = HITAM
     hint = False
     play = True
-    turn = 1  # menyatakan giliran sekarang
-    # players = [RandomBot, HumanPlayer]
-    players = [gerakanRandom, validasiMasukan]
+    players = {}
+    players[PUTIH] = RandomBot()
+    players[HITAM] = HumanPlayer()
     while play:
         print()
         if not hint:
@@ -211,8 +165,7 @@ if __name__ == "__main__":
         skor = hitungSkor(papan)
         cetakSkor(skor[HITAM], skor[PUTIH])
 
-        # turn ganjil = player
-        masukan = players[turn % 2](papan, giliran)
+        masukan = players[giliran].doMove(papan, giliran)
 
         if not bergerak(papan, giliran, masukan["x"], masukan["y"],
                         masukan["lokasi"]):
@@ -220,7 +173,6 @@ if __name__ == "__main__":
             play = False
         else:
             giliran = lawanGiliran(giliran)
-            turn += 1
 
     if masukan != "quit":
         print("\npermainan berkahir")
