@@ -10,21 +10,21 @@ class HumanPlayer(PlayerBase):
         #       titik disk yang diterima yang valid untuk gerakan dan titik seberangnya
         valid = False
         while not valid:
-            masukan = input("masukan: ").lower()
+            masukan = input("Masukan: ").lower()
             titik = masukan.split()
             if len(titik) == 2:
                 if titik[0].isdigit() and titik[1].isdigit():
                     # kedua input adalah integer
                     x = int(titik[0]) - 1
                     y = int(titik[1]) - 1
-                    lokasi = cekGerakanValid(board, turn, x, y)
-                    if lokasi != False:
+                    lokasi = getFlippableTile(board, turn, x, y)
+                    if len(lokasi) != 0:
                         # titik yang valid
                         valid = True
                     else:
-                        print("titik tidak valid")
+                        print("Titik tidak valid")
                 else:
-                    print("masukan koordinat angka")
+                    print("Masukan koordinat angka")
             else:
-                print("input tidak valid")
+                print("Input tidak valid")
         return {"x": x, "y": y, "lokasi": lokasi}
