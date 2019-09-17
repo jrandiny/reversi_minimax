@@ -7,6 +7,9 @@
 import random
 from math import log10
 from constant import *
+from utils import *
+from player.random_bot import RandomBot
+from player.human_player import HumanPlayer
 
 
 def cetakPapan(papan):
@@ -15,111 +18,34 @@ def cetakPapan(papan):
     # F.S. papan tercetak di layar
 
     dim = len(papan)
-    ORD = int(log10(dim))+1  # ordo dari dimensi papan
-    SPACE = " "*ORD  # jumlah spasi
-    GARISH = " "+SPACE+(("+--"+"-"*ORD)*(dim))+"+"  # garis horizontal
-    GARISV = " "+SPACE+(("|  "+" "*ORD)*(dim))+"|"  # garis vertikal
-    offset = int(1 + (ORD/2))  # offset karakter dari border
-    tail = (2 + ORD) - (offset+1)  # jumlah spasi di belakang karakter
+    ORD = int(log10(dim)) + 1  # ordo dari dimensi papan
+    SPACE = " " * ORD  # jumlah spasi
+    GARISH = " " + SPACE + (("+--" + "-" * ORD) *
+                            (dim)) + "+"  # garis horizontal
+    GARISV = " " + SPACE + (("|  " + " " * ORD) *
+                            (dim)) + "|"  # garis vertikal
+    offset = int(1 + (ORD / 2))  # offset karakter dari border
+    tail = (2 + ORD) - (offset + 1)  # jumlah spasi di belakang karakter
 
     # cetak koordinat X
     print("   ", end=SPACE)
     for i in range(dim):
-        ordoI = int(log10(i+1))
-        print(f"{i+1}  "+" "*(ORD-ordoI), end="")
+        ordoI = int(log10(i + 1))
+        print(f"{i+1}  " + " " * (ORD - ordoI), end="")
 
     # cetak Isi
-    print("\n"+GARISH)
+    print("\n" + GARISH)
     for y in range(dim):
         print(GARISV)
-        ordoY = int(log10(y+1))
+        ordoY = int(log10(y + 1))
         # cetak koordinat Y
-        print(y+1, end=" "*(ORD-ordoY))
+        print(y + 1, end=" " * (ORD - ordoY))
         # cetak isi papan
         for x in papan[y]:
-            print("|"+" "*offset+x, end=" "*tail)
+            print("|" + " " * offset + x, end=" " * tail)
         print("|")
         print(GARISV)
         print(GARISH)
-
-
-def buatPapanKosong(dim):
-    # Fungsi untuk membuat papan kosong sesuai ukuran dimensi
-    return [[KOSONG] * dim for i in range(dim)]
-
-
-def resetPapanReversi(papan):
-    # Prosedur untuk membuat papan yang ada menjadi papan reversi standar
-    # I.S. papan terdefinisi sebagai matrik persegi dengan
-    #      panjang sisi genap dan >= 2
-    # F.S. papan menjadi papan reversi standar dengan x = hitam, o = putih
-    #      terletak di tengah papan
-
-    # mengosongkan papan
-    for row in papan:
-        for col in row:
-            col = KOSONG
-    dim = len(papan)
-    mid = int((dim/2)-1)
-    # menetapkan kondisi awal reversi
-    papan[mid][mid] = papan[mid+1][mid+1] = PUTIH
-    papan[mid+1][mid] = papan[mid][mid+1] = HITAM
-
-
-def dalamPapan(x, y):
-    # Fungsi untuk memeriksa apakah indeks x dan y ada dalam jangkauan papan
-    return x >= 0 and x <= DIM - 1 and y >= 0 and y <= DIM-1
-
-
-def lawanGiliran(giliran):
-    # Fungsi yang mengembalikan lawan dari giliran sekarang
-    if giliran == HITAM:
-        lawan = PUTIH
-    else:
-        # giliran putih
-        lawan = HITAM
-    return lawan
-
-
-def cekGerakanValid(papan, giliran, posX, posY):
-    # Fungsi untuk memeriksa apakah langkah pada posX dan posY adalah valid pada giliran "giliran"
-    # Mengembalikan false jika tidak valid atau posisi disk yang bersebarangan jika true
-    if (not dalamPapan(posX, posY) or papan[posY][posX] != KOSONG):
-        # print(1)
-        return False
-    else:
-        # posisi di dalam papan dan petak dalam keadaan kosong
-        papan[posY][posX] = giliran  # set sementara untuk pemeriksaan
-        lawan = lawanGiliran(giliran)
-        lokasi = []
-        for arahX, arahY in ARAH:
-            # cek pada semua arah
-            x, y = posX, posY
-            x += arahX
-            y += arahY
-            if not dalamPapan(x, y):
-                continue
-            else:
-                # masih dalam papan
-                if papan[y][x] == lawan:
-                    # sebelah pertama harus lawan
-                    while papan[y][x] == lawan:
-                        x += arahX
-                        y += arahY
-                        if not dalamPapan(x, y):
-                            break
-                    if dalamPapan(x, y):
-                        # x,y masih dalam papan
-                        if papan[y][x] == giliran:
-                            # menemukan seberangnya
-                            lokasi.append([x, y])
-        papan[posY][posX] = KOSONG  # dikosongkan kembali
-        if len(lokasi) == 0:
-            # tidak ada disk di seberang
-            return False
-        else:
-            # ada disk di seberang
-            return lokasi
 
 
 def revers(papan, giliran, lokasi, posX, posY):
@@ -147,26 +73,6 @@ def revers(papan, giliran, lokasi, posX, posY):
             papan[y][x] = giliran
             x += arahX
             y += arahY
-
-
-def copyPapan(papan):
-    # Fungsi yang mengembalikan salinan dari papan masukan
-    copy = buatPapanKosong(len(papan))
-
-    for row in range(len(papan)):
-        for col in range(len(papan)):
-            copy[row][col] = papan[row][col]
-    return copy
-
-
-def gerakanTersedia(papan, giliran):
-    # Fungsi yang menghasilkan semua titik gerakan yang mungkin dilakukan pada giliran "giliran"
-    tersedia = []
-    for y in range(len(papan)):
-        for x in range(len(papan)):
-            if cekGerakanValid(papan, giliran, x, y) != False:
-                tersedia.append([x, y])
-    return tersedia
 
 
 def papanBerhint(papan, giliran):
@@ -281,6 +187,7 @@ def gerakanRandom(papan, giliran):
     x = terpilih[0]
     y = terpilih[1]
     lokasi = cekGerakanValid(papan, giliran, x, y)
+    print(f"bot bergerak [{masukan['x']+1},{masukan['y']+1}]")
     return {"x": x, "y": y, "lokasi": lokasi}
 
 
@@ -292,40 +199,29 @@ if __name__ == "__main__":
     hint = False
     play = True
     turn = 1  # menyatakan giliran sekarang
+    # players = [RandomBot, HumanPlayer]
+    players = [gerakanRandom, validasiMasukan]
     while play:
         print()
         if not hint:
             cetakPapan(papan)
         else:
             cetakPapan(papanBerhint(papan, giliran))
-        print("Sekarang giliran "+giliran)
+        print("Sekarang giliran " + giliran)
         skor = hitungSkor(papan)
         cetakSkor(skor[HITAM], skor[PUTIH])
-        if (turn % 2 == 1):
-            # turn ganjil = player
-            masukan = validasiMasukan(papan, giliran)
-            # masukan pasti valid
-            if masukan == "hint":
-                hint = not hint
-            elif masukan == "quit":
-                play = False
-            else:
-                if not bergerak(papan, giliran, masukan["x"], masukan["y"], masukan["lokasi"]):
-                    # permainan selesai
-                    play = False
-                else:
-                    giliran = lawanGiliran(giliran)
-                    turn += 1
+
+        # turn ganjil = player
+        masukan = players[turn % 2](papan, giliran)
+
+        if not bergerak(papan, giliran, masukan["x"], masukan["y"],
+                        masukan["lokasi"]):
+            # permainan selesai
+            play = False
         else:
-            # turn genap = bot
-            masukan = gerakanRandom(papan, giliran)
-            print(f"bot bergerak [{masukan['x']+1},{masukan['y']+1}]")
-            if not bergerak(papan, giliran, masukan["x"], masukan["y"], masukan["lokasi"]):
-                # permainan selesai
-                play = False
-            else:
-                giliran = lawanGiliran(giliran)
-                turn += 1
+            giliran = lawanGiliran(giliran)
+            turn += 1
+
     if masukan != "quit":
         print("\npermainan berkahir")
         cetakPapan(papan)

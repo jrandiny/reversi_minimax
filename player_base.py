@@ -1,19 +1,18 @@
 from abc import ABC, abstractmethod
-from typing import Tuple
 
 
-class playerBase(ABC):
+class PlayerBase(ABC):
 
     # init
-    def init(self) -> None:
+    def init(self):
         pass
 
     # Player do some move
     # Return tuple of (x,y)
-    @abstractmethod()
-    def doMove(self) -> Tuple[int, int]:
+    @abstractmethod
+    def doMove(self):
         pass
 
     # Give board to player
-    def setBoard(self) -> None:
+    def setBoard(self):
         pass
