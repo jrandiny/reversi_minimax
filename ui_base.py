@@ -15,6 +15,7 @@ class UIMessageType(Enum):
 class UICommandType(Enum):
     NOOP = -1
     QUIT = 0
+    MOVE = 1
 
 
 class UIBase(ABC):

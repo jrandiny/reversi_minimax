@@ -3,24 +3,34 @@ from utils import *
 
 
 class AIBot(PlayerBase):
+    moveList = []
+
+    def init(self):
+        self.moveList = []
+
     def doMove(self, board, turn):
         # Prosedur untuk melakukan gerakan random pada giliran "giliran"
         # I.S. papan dan giliran terdefinisi
         # F.S. dilakukan gerakan random pada papan
-        #move = getBestMove(board,turn)
-        # x = move[0]
-        # y = move[1]
+        availableMove = getAvailableMove(board, turn)
+        if len(availableMove) == 1:
+            move = availableMove[0]
+        else:
+            move = self.minimax(board, 3 - 9999, 9999, turn)[1]
+        x = move[0]
+        y = move[1]
+        self.moveList.append([x, y])
         print(f"bot bergerak [{x+1},{y+1}]")
         return {"x": x, "y": y}
 
-    def evaluateState(board):
+    def evaluateState(self, board):
         skor = countScore(board)
-        posValue = hitungPositionValue(board)
-        value = (skor[WHITE] - skor[BLACK]) * 100 + (posValue[WHITE] -
-                                                     posValue[BLACK])
+        posValue = self.hitungPositionValue(board)
+        value = (skor[WHITE] - skor[BLACK]) * SKOR_FACTOR + (posValue[WHITE] -
+                                                             posValue[BLACK])
         return value
 
-    def hitungPositionValue(board):
+    def hitungPositionValue(self, board):
         valuePutih = 0
         valueHitam = 0
 
@@ -32,36 +42,50 @@ class AIBot(PlayerBase):
                     valueHitam += TABLE_VALUE[row][col]
         return {WHITE: valuePutih, BLACK: valueHitam}
 
-    def minimax(board, depth, alpha, beta, turn):
-        if depth == 0:
-            return evaluateState(board)
-
+    def minimax(self, board, depth, alpha, beta, turn):
         availableMove = getAvailableMove(board, turn)
 
-        if turn == WHITE:
+        if depth == 0 or len(availableMove) == 0:
+            return [self.evaluateState(board), INVALID_MOVE]
+        elif turn == WHITE:
             maxEval = -9999
             for move in availableMove:
                 copy = copyBoard(board)
-                makeMove(copy, turn, move['lokasi'], move['x'], move['y'])
-                value = minimax(copy, depth - 1, alpha, beta, nextTurn(turn))
-                maxEval = max(maxEval, value)
-                alpha = max(alpha, value)
-                if beta <= alpha:
-                    break
-            return maxEval
+                makeMove(copy, turn, move[0], move[1])
+                # if len(availableMove)
+                # if depth != 1:
+                #     value = self.minimax(copy, depth - 1, alpha, beta,
+                #                          nextTurn(turn))[0]
+                # else:
+                #     value = self.evaluateState(board)
+                value = self.minimax(copy, depth - 1, alpha, beta,
+                                     nextTurn(turn))[0]
+                if value >= maxEval:
+                    maxEval = value
+                    gerakan = move
+
+                # alpha = max(alpha, value)
+                # if beta <= alpha:
+                #     break
+            return [maxEval, gerakan]
         else:
             minEval = 9999
+            # print(turn + " availableMove " + str(availableMove))
             for move in availableMove:
                 copy = copyBoard(board)
-                makeMove(copy, turn, move['lokasi'], move['x'], move['y'])
-                value = minimax(board, depth - 1, alpha, beta, nextTurn(turn))
-                minEval = min(minEval, value)
-                beta = min(beta, value)
-                if beta <= alpha:
-                    break
-            return minEval
+                makeMove(copy, turn, move[0], move[1])
+                # if depth != 1:
+                #     value = self.minimax(board, depth - 1, alpha, beta,
+                #                          nextTurn(turn))[0]
+                # else:
+                #     value = self.evaluateState(board)
+                value = self.minimax(board, depth - 1, alpha, beta,
+                                     nextTurn(turn))[0]
+                if value <= minEval:
+                    minEval = value
+                    gerakan = move
 
-    # def getBestMove(board, turn):
-    #     score = minimax(board, 3, -9999, 9999, turn)
-
-    #     return [X, Y]
+                # beta = min(beta, value)
+                # if beta <= alpha:
+                #     break
+            return [minEval, gerakan]

@@ -60,6 +60,11 @@ def getFlippableTile(board, turn, posX, posY):
     return flippableTile
 
 
+def isCorner(papan, x, y):
+    return (x == 0 and y == 0) or (x == len(papan) and y == 0) or (
+        x == 0 and y == len(papan)) or (x == len(papan) and y == len(papan))
+
+
 def newBoard(dim):
     # Fungsi untuk membuat papan kosong sesuai ukuran dimensi
     return [[EMPTY] * dim for i in range(dim)]
