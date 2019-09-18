@@ -5,14 +5,12 @@
 # Interface : gtk
 
 import random
+import importlib
 from constant import *
 from utils import *
 import time
 import sys
 import argparse
-from bot.random_bot import RandomBot
-from bot.ai_bot import AIBot
-from bot.bot2 import Bot2
 from ui.console.console import ConsoleUI
 from ui.gui.main import QTUI
 from ui.dummy.dummy import DummyUI
@@ -64,19 +62,45 @@ if __name__ == "__main__":
                         default=1,
                         help="Run in benchmark mode N times (default: 50)")
 
+    parser.add_argument("--white",
+                        type=str,
+                        nargs="?",
+                        default="random_bot/RandomBot",
+                        help="Specify White AI")
+
+    parser.add_argument("--black",
+                        type=str,
+                        nargs="?",
+                        default="random_bot/RandomBot",
+                        help="Specify White AI")
+
     args = parser.parse_args()
+
+    benchmarkMode = args.loopCount > 1
 
     players = {}
 
-    players[WHITE] = Bot2()
-    players[BLACK] = AIBot()
+    # print(aiWhiteName)
+    # print(aiBlackName)
+
+    if (benchmarkMode):
+        aiWhiteName = args.white.split("/")
+        aiWhiteModule = importlib.import_module("bot." + aiWhiteName[0])
+        aiWhiteClass = getattr(aiWhiteModule, aiWhiteName[1])
+        players[WHITE] = aiWhiteClass()
+
+        aiBlackName = args.black.split("/")
+        aiBlackModule = importlib.import_module("bot." + aiBlackName[0])
+        aiBlackClass = getattr(aiBlackModule, aiBlackName[1])
+        players[BLACK] = aiBlackClass()
+    else:
+        players[WHITE] = RandomBot()
+        players[BLACK] = RandomBot()
 
     blackWin = 0
     whiteWin = 0
 
     startTime = time.time()
-
-    benchmarkMode = args.loopCount > 1
 
     if (benchmarkMode):
         ui = DummyUI()

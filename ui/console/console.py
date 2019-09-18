@@ -56,17 +56,11 @@ class ConsoleUI(UIBase):
                     # kedua input adalah integer
                     x = int(titik[0]) - 1
                     y = int(titik[1]) - 1
-                    lokasi = getFlippableTile(board, turn, x, y)
-                    if len(lokasi) != 0:
-                        # titik yang valid
-                        valid = True
-                    else:
-                        print("Titik tidak valid")
                 else:
                     print("Masukan koordinat angka")
             else:
                 print("Input tidak valid")
-        return {"x": x, "y": y, "lokasi": lokasi}
+        return {"x": x, "y": y}
 
     def threadWorker(self):
         while True:
