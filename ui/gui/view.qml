@@ -26,18 +26,13 @@ Rectangle {
                 {posX:6,posY:0},{posX:6,posY:1},{posX:6,posY:2},{posX:6,posY:3},{posX:6,posY:4},{posX:6,posY:5},{posX:6,posY:6},{posX:6,posY:7},
                 {posX:7,posY:0},{posX:7,posY:1},{posX:7,posY:2},{posX:7,posY:3},{posX:7,posY:4},{posX:7,posY:5},{posX:7,posY:6},{posX:7,posY:7}]
 
-        function flipItem(index){
-            currentIndex = index
-            currentItem.flip()
-        }
 
         delegate: Rectangle {
             color:"green"
             width:boardGrid.cellWidth
             height:boardGrid.cellHeight
             border.width:1
-            border.color:"black" 
-
+            border.color:"black"
         
             Flipable {
                 id: flipable
@@ -100,30 +95,43 @@ Rectangle {
 
             }
             
-            function flip(){
+            function spawn(){
                 if (!flipable.hasClicked) {
-                    flipable.hasClicked = true;
+                    flipable.hasClicked = true
                     if (boardGrid.blackTurn){
-                        flipable.front = flipable.blackPiece;
-                        flipable.back = flipable.whitePiece;
+                        flipable.front = flipable.blackPiece
+                        flipable.back = flipable.whitePiece
                     }else{
-                        flipable.front = flipable.whitePiece;
+                        flipable.front = flipable.whitePiece
                         flipable.back = flipable.blackPiece
                     }
-                } else {
-                    flipable.flipped = !flipable.flipped
                 }
-                boardGrid.blackTurn = !boardGrid.blackTurn;
-                console.log(boardGrid.blackTurn);
+                boardGrid.blackTurn = !boardGrid.blackTurn
+            }
+
+            function flip(){
+                flipable.flipped = !flipable.flipped
             }
 
             MouseArea {
                 anchors.fill: parent
                 onClicked: {
-                    handler.tileClicked(index)
-                    flip();
+                    boardGrid.currentIndex = index
+                    // handler.tileClicked(index)
+                    console.log(boardGrid.currentIndex)
+                    spawn();
                 }
             }
+        }
+
+        function getCell(index){
+            boardGrid.currentIndex = index
+            return boardGrid.currentItem
+        }
+
+        function flipAt(index){
+            boardGrid.currentIndex = index
+            boardGrid.currentItem.spawn()
         }
 
         onWidthChanged: {

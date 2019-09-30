@@ -46,6 +46,9 @@ class QTUI(UIBase):
         context = view.rootContext()
         context.setContextProperty("handler", handler)
 
+        # self.board
+        print(self.board.getCell(3).spawn())
+        # self.cell.spawn()
         #Show the window
         if view.status() == QQuickView.Error:
             sys.exit(-1)
