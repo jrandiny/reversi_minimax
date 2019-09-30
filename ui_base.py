@@ -19,18 +19,20 @@ class UICommandType(Enum):
     QUIT = 0
     MOVE = 1
 
+
 class UIPlayer(BotBase):
     def __init__(self, moveQueue, askForMove):
         self.askForMove = askForMove
-        self.moveQueue = moveQueue
+        self.moveQueue: Queue = moveQueue
 
     def getName(self, moveQueue):
         return "Player"
-    
+
     def doMove(self, board, turn):
         self.askForMove()
-        move = self.moveQueue.get(True)
+        move = self.moveQueue.get(block=True)
         return move
+
 
 class UIBase(ABC):
     def __init__(self):

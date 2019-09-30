@@ -117,7 +117,7 @@ Rectangle {
                 anchors.fill: parent
                 onClicked: {
                     boardGrid.currentIndex = index
-                    // handler.tileClicked(index)
+                    handler.tileClicked(index)
                     console.log(boardGrid.currentIndex)
                     spawn();
                 }
