@@ -15,6 +15,7 @@ from ui.console.console import ConsoleUI
 from ui.gui.main import QTUI
 from ui.dummy.dummy import DummyUI
 from ui_base import UICommandType
+from bot.random_bot import RandomBot
 
 
 def game(players, board, ui):
@@ -72,7 +73,12 @@ if __name__ == "__main__":
                         type=str,
                         nargs="?",
                         default="random_bot/RandomBot",
-                        help="Specify White AI")
+                        help="Specify Black AI")
+
+    parser.add_argument("--gui",
+                        action='store_const',
+                        const=True,
+                        help="Using GUI?")
 
     args = parser.parse_args()
 
@@ -105,8 +111,10 @@ if __name__ == "__main__":
     if (benchmarkMode):
         ui = DummyUI()
     else:
-        # ui = QTUI()
-        ui = ConsoleUI()
+        if (args.gui):
+            ui = QTUI()
+        else:
+            ui = ConsoleUI()
 
     for x in range(args.loopCount):
         board = newBoard(DIM)
