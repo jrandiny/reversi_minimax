@@ -50,6 +50,7 @@ def game(players, board, ui):
                         turn = nextTurn(turn)
 
             play = not isFinish(board, turn)
+    ui.giveNewBoard(board)
 
 
 if __name__ == "__main__":

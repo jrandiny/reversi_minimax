@@ -10,6 +10,7 @@ from PySide2.QtCore import QObject, Signal, Slot, QUrl
 from PySide2.QtGui import QGuiApplication
 from ui_base import UIBase, UICommandType, UIMessageType
 from queue import Queue
+from constant import *
 
 
 class Handler(QObject):
@@ -19,16 +20,42 @@ class Handler(QObject):
 
     @Slot(int)
     def tileClicked(self, index):
+        print({"xsss": index % 8, "ysss": index // 8})
         self.moveQueue.put({"x": index % 8, "y": index // 8})
 
 
+class uiClass(QObject):
+    interactCell = Signal(int, bool)
+
+    def __init__(self, board):
+        super().__init__()
+        self.interactCell.connect(board.interactCell)
+
+    def send(self, index, isBlack):
+        self.interactCell.emit(index, isBlack)
+
+
 class QTUI(UIBase):
-    def ioThread(self, inputQueue):
+    def xyToIndex(self, x, y):
+        return y * 8 + x
+
+    def indexToXY(self, index):
+        return (index % 8, index // 8)
+
+    def ioThread(self, inputQueue, emitter):
+        interactCell = Signal(int, int)
         while True:
             io = inputQueue.get()
 
             if (io["type"] == UIMessageType.BOARD):
-                print(io["data"])
+                for index in range(0, 64):
+                    col, row = self.indexToXY(index)
+                    item = io["data"][row][col]
+                    if (item == BLACK):
+                        emitter.send(index, True)
+                    elif (item == WHITE):
+                        emitter.send(index, False)
+
             elif (io["type"] == UIMessageType.SCORE):
                 print(io["data"])
             elif (io["type"] == UIMessageType.TURN):
@@ -59,15 +86,12 @@ class QTUI(UIBase):
         context = self.view.rootContext()
         context.setContextProperty("handler", handler)
 
-        print(self.board.getCell(3).spawn())
-        # self.cell.spawn()
-
         #Show the window
         if self.view.status() == QQuickView.Error:
             sys.exit(-1)
 
         threading.Thread(target=self.ioThread,
-                         args=(self.inputQueue, )).start()
+                         args=(self.inputQueue, uiClass(self.board))).start()
 
         self.view.show()
         self.app.exec_()

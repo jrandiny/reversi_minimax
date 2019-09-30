@@ -15,7 +15,6 @@ Rectangle {
         cellWidth: 100; cellHeight: 100
         objectName:"boardGame"
         focus: true
-        property bool blackTurn:true;
         
         model: [{posX:0,posY:0},{posX:0,posY:1},{posX:0,posY:2},{posX:0,posY:3},{posX:0,posY:4},{posX:0,posY:5},{posX:0,posY:6},{posX:0,posY:7},
                 {posX:1,posY:0},{posX:1,posY:1},{posX:1,posY:2},{posX:1,posY:3},{posX:1,posY:4},{posX:1,posY:5},{posX:1,posY:6},{posX:1,posY:7},
@@ -25,7 +24,6 @@ Rectangle {
                 {posX:5,posY:0},{posX:5,posY:1},{posX:5,posY:2},{posX:5,posY:3},{posX:5,posY:4},{posX:5,posY:5},{posX:5,posY:6},{posX:5,posY:7},
                 {posX:6,posY:0},{posX:6,posY:1},{posX:6,posY:2},{posX:6,posY:3},{posX:6,posY:4},{posX:6,posY:5},{posX:6,posY:6},{posX:6,posY:7},
                 {posX:7,posY:0},{posX:7,posY:1},{posX:7,posY:2},{posX:7,posY:3},{posX:7,posY:4},{posX:7,posY:5},{posX:7,posY:6},{posX:7,posY:7}]
-
 
         delegate: Rectangle {
             color:"green"
@@ -40,6 +38,7 @@ Rectangle {
                 height: parent.height
                 
                 property bool hasClicked:false;
+                property bool isCurrentBlack: false;
 
                 property var blackPiece: Rectangle {
                     width: 0.9*flipable.width
@@ -95,22 +94,23 @@ Rectangle {
 
             }
             
-            function spawn(){
+            function interact(black){
                 if (!flipable.hasClicked) {
                     flipable.hasClicked = true
-                    if (boardGrid.blackTurn){
+                    flipable.isCurrentBlack = black
+                    if (black){
                         flipable.front = flipable.blackPiece
                         flipable.back = flipable.whitePiece
                     }else{
                         flipable.front = flipable.whitePiece
                         flipable.back = flipable.blackPiece
                     }
+                }else{
+                    if(flipable.isCurrentBlack != black){
+                        flipable.isCurrentBlack = !flipable.isCurrentBlack
+                        flipable.flipped = !flipable.flipped
+                    }
                 }
-                boardGrid.blackTurn = !boardGrid.blackTurn
-            }
-
-            function flip(){
-                flipable.flipped = !flipable.flipped
             }
 
             MouseArea {
@@ -118,20 +118,13 @@ Rectangle {
                 onClicked: {
                     boardGrid.currentIndex = index
                     handler.tileClicked(index)
-                    console.log(boardGrid.currentIndex)
-                    spawn();
                 }
             }
         }
 
-        function getCell(index){
+        function interactCell(index, black){
             boardGrid.currentIndex = index
-            return boardGrid.currentItem
-        }
-
-        function flipAt(index){
-            boardGrid.currentIndex = index
-            boardGrid.currentItem.spawn()
+            boardGrid.currentItem.interact(black)
         }
 
         onWidthChanged: {
