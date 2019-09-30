@@ -16,6 +16,5 @@ class RandomBot(BotBase):
         terpilih = move[0]
         x = terpilih[0]
         y = terpilih[1]
-        lokasi = getFlippableTile(board, turn, x, y)
         # print(f"bot bergerak [{x+1},{y+1}]")
-        return {"x": x, "y": y, "lokasi": lokasi}
+        return {"x": x, "y": y}
