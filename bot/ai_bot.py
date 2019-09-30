@@ -27,11 +27,11 @@ class AIBot(BotBase):
         # print(f"bot bergerak [{x+1},{y+1}]")
         return {"x": x, "y": y}
 
-    def evaluateState(self, board):
+    def evaluateState(self, board, turn):
         skor = countScore(board)
         posValue = self.hitungPositionValue(board)
-        value = (skor[WHITE] - skor[BLACK]) * SKOR_FACTOR + (posValue[WHITE] -
-                                                             posValue[BLACK])
+        value = (skor[WHITE] - skor[BLACK]) * SKOR_FACTOR
+        value += (posValue[WHITE] - posValue[BLACK])
         return value
 
     def hitungPositionValue(self, board):
@@ -51,7 +51,7 @@ class AIBot(BotBase):
         availableMove = getAvailableMove(board, turn)
 
         if depth == 0 or len(availableMove) == 0:
-            return [self.evaluateState(board), INVALID_MOVE]
+            return [self.evaluateState(board, turn), INVALID_MOVE]
         elif turn == WHITE:
             maxEval = -9999
             for move in availableMove:
@@ -69,9 +69,9 @@ class AIBot(BotBase):
                     maxEval = value
                     gerakan = move
 
-                # alpha = max(alpha, value)
-                # if beta <= alpha:
-                #     break
+                alpha = max(alpha, value)
+                if beta <= alpha:
+                    break
             return [maxEval, gerakan]
         else:
             minEval = 9999
@@ -90,7 +90,7 @@ class AIBot(BotBase):
                     minEval = value
                     gerakan = move
 
-                # beta = min(beta, value)
-                # if beta <= alpha:
-                #     break
+                beta = min(beta, value)
+                if beta <= alpha:
+                    break
             return [minEval, gerakan]
