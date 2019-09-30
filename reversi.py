@@ -86,8 +86,13 @@ if __name__ == "__main__":
 
     players = {}
 
-    # print(aiWhiteName)
-    # print(aiBlackName)
+    if (benchmarkMode):
+        ui = DummyUI()
+    else:
+        if (args.gui):
+            ui = QTUI()
+        else:
+            ui = ConsoleUI()
 
     if (benchmarkMode):
         aiWhiteName = args.white.split("/")
@@ -101,20 +106,12 @@ if __name__ == "__main__":
         players[BLACK] = aiBlackClass()
     else:
         players[WHITE] = RandomBot()
-        players[BLACK] = RandomBot()
+        players[BLACK] = ui.getPlayer()
 
     blackWin = 0
     whiteWin = 0
 
     startTime = time.time()
-
-    if (benchmarkMode):
-        ui = DummyUI()
-    else:
-        if (args.gui):
-            ui = QTUI()
-        else:
-            ui = ConsoleUI()
 
     for x in range(args.loopCount):
         board = newBoard(DIM)

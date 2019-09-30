@@ -56,11 +56,12 @@ class ConsoleUI(UIBase):
                     # kedua input adalah integer
                     x = int(titik[0]) - 1
                     y = int(titik[1]) - 1
+                    valid = True
                 else:
                     print("Masukan koordinat angka")
             else:
                 print("Input tidak valid")
-        return {"x": x, "y": y}
+        self.moveQueue.put({"x": x, "y": y})
 
     def threadWorker(self):
         while True:
@@ -75,6 +76,8 @@ class ConsoleUI(UIBase):
                 print(f"Sekarang giliran {turn}")
             elif (io["type"] == UIMessageType.FORFEIT):
                 print("Tidak ada langkah mungkin, skip")
+            elif (io["type"] == UIMessageType.DOTURN):
+                self.doInput()
             elif (io["type"] == UIMessageType.QUIT):
                 break
 

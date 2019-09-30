@@ -1,7 +1,8 @@
-from abc import ABC, abstractmethod
-from queue import Queue
 import threading
+from abc import ABC, abstractmethod
+from bot_base import BotBase
 from enum import Enum
+from queue import Queue
 
 
 class UIMessageType(Enum):
@@ -10,6 +11,7 @@ class UIMessageType(Enum):
     TURN = 2
     SCORE = 3
     FORFEIT = 4
+    DOTURN = 5
 
 
 class UICommandType(Enum):
@@ -17,11 +19,24 @@ class UICommandType(Enum):
     QUIT = 0
     MOVE = 1
 
+class UIPlayer(BotBase):
+    def __init__(self, moveQueue, askForMove):
+        self.askForMove = askForMove
+        self.moveQueue = moveQueue
+
+    def getName(self, moveQueue):
+        return "Player"
+    
+    def doMove(self, board, turn):
+        self.askForMove()
+        move = self.moveQueue.get(True)
+        return move
 
 class UIBase(ABC):
     def __init__(self):
         self.inputQueue = Queue()
         self.outputQueue = Queue()
+        self.moveQueue = Queue()
         self.uiThread = threading.Thread(target=self.threadWorker)
         self.uiThread.start()
 
@@ -40,6 +55,9 @@ class UIBase(ABC):
     def giveForfeitTurn(self):
         self.inputQueue.put({"type": UIMessageType.FORFEIT})
 
+    def giveTurnSignal(self):
+        self.inputQueue.put({"type": UIMessageType.DOTURN})
+
     def forceQuitUI(self):
         self.inputQueue.put({"type": UIMessageType.QUIT})
         self.uiThread.join()
@@ -51,6 +69,9 @@ class UIBase(ABC):
             return command
         else:
             return {"type": UICommandType.NOOP}
+
+    def getPlayer(self):
+        return UIPlayer(self.moveQueue, self.giveTurnSignal)
 
     @abstractmethod
     def threadWorker(self):
