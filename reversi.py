@@ -51,6 +51,9 @@ def game(players, board, ui):
 
             play = not isFinish(board, turn)
     ui.giveNewBoard(board)
+    score = countScore(board)
+    ui.giveNewScore(score)
+
 
 
 if __name__ == "__main__":

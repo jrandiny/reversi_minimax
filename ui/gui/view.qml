@@ -1,20 +1,25 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.1
+import QtQuick.Layouts 1.13
 
 Rectangle {
     id:mainWindow
     width: 800
-    height: 800
+    height: 900
     color: "white"
 
     property int dim: 8
 
+    
+
     GridView {
         id:boardGrid
-        anchors.fill:parent
+        width:mainWindow.width
+        height:mainWindow.width
         cellWidth: 100; cellHeight: 100
         objectName:"boardGame"
         focus: true
+        // interactive: false
         
         model: [{posX:0,posY:0},{posX:0,posY:1},{posX:0,posY:2},{posX:0,posY:3},{posX:0,posY:4},{posX:0,posY:5},{posX:0,posY:6},{posX:0,posY:7},
                 {posX:1,posY:0},{posX:1,posY:1},{posX:1,posY:2},{posX:1,posY:3},{posX:1,posY:4},{posX:1,posY:5},{posX:1,posY:6},{posX:1,posY:7},
@@ -133,7 +138,51 @@ Rectangle {
             mainWindow.width=minSize;
             boardGrid.cellWidth = boardGrid.width/mainWindow.dim;
             boardGrid.cellHeight = cellWidth;            
+            // console.log("width change")
         }
+    }
+
+    Row {
+        id: scoreBoard
+        // wi
+        anchors.top: boardGrid.bottom
+        // anchors.fill: parent
+        // spacing: 6
+        Rectangle {
+            color: "white"
+            width: mainWindow.width/2
+            height: 100
+            
+            Text {
+                id:whiteScore
+                color: "black"
+                font.family: "Helvetica"
+                font.pointSize: 24      
+                anchors.centerIn: parent
+                // text: "White : 5"
+            }
+        }
+        Rectangle {
+            color: "black"
+            width: mainWindow.width/2
+            height: 100
+            
+            Text {
+                id:blackScore
+                color: "white"
+                font.family: "Helvetica"
+                font.pointSize: 24      
+                anchors.centerIn: parent
+                // text: "Black : 10"
+            }
+        }
+    }
+
+    function setScore(_whiteScore, _blackScore){
+        // console.log(_whiteScore)
+        // console.log(_blackScore)
+        whiteScore.text = "White : " + _whiteScore
+        blackScore.text = "Black : " + _blackScore
     }
     
 }
