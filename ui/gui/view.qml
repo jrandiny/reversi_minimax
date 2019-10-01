@@ -6,7 +6,7 @@ Rectangle {
     id:mainWindow
     width: 800
     height: 800/aspect
-    color: "white"
+    color: "saddlebrown"
 
     readonly property double aspect: 8/9
 
@@ -211,6 +211,14 @@ Rectangle {
                 anchors.topMargin: width/7              
             }
         }
+    }
+
+    OpacityAnimator {
+        target: mainWindow;
+        from: 0;
+        to: 1;
+        duration: 1000
+        running: true
     }
 
     function setScore(_whiteScore, _blackScore){
