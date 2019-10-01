@@ -161,6 +161,17 @@ Rectangle {
                 anchors.centerIn: parent
                 // text: "White : 5"
             }
+
+            Rectangle{
+                id:whiteMark
+                anchors.top: whiteScore.bottom
+                color: "white"
+                width: parent.width/5
+                height: parent.height/10
+                anchors.horizontalCenter: parent.horizontalCenter
+                radius: width/2
+                anchors.topMargin: width/7              
+            }
         }
         Rectangle {
             color: "black"
@@ -175,6 +186,17 @@ Rectangle {
                 anchors.centerIn: parent
                 // text: "Black : 10"
             }
+
+            Rectangle{
+                id:blackMark
+                anchors.top: blackScore.bottom
+                color: "black"
+                width: parent.width/5
+                height: parent.height/10
+                anchors.horizontalCenter: parent.horizontalCenter
+                radius: width/2
+                anchors.topMargin: width/7              
+            }
         }
     }
 
@@ -183,6 +205,16 @@ Rectangle {
         // console.log(_blackScore)
         whiteScore.text = "White : " + _whiteScore
         blackScore.text = "Black : " + _blackScore
+    }
+
+    function setMark(isBlackTurn){
+        if(isBlackTurn){
+            blackMark.color = "white"
+            whiteMark.color = "white"
+        }else{
+            blackMark.color = "black"
+            whiteMark.color = "black"
+        }
     }
     
 }

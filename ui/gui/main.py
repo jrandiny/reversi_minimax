@@ -20,25 +20,30 @@ class Handler(QObject):
 
     @Slot(int)
     def tileClicked(self, index):
-        print({"xsss": index % 8, "ysss": index // 8})
+        # print({"xsss": index % 8, "ysss": index // 8})
         self.moveQueue.put({"x": index % 8, "y": index // 8})
 
 
 class uiClass(QObject):
     interactCell = Signal(int, bool)
     setScore = Signal(int, int)
+    setMark = Signal(bool)
 
     def __init__(self, root):
         super().__init__()
         board = root.findChild(QObject, "boardGame")
         self.interactCell.connect(board.interactCell)
         self.setScore.connect(root.setScore)
+        self.setMark.connect(root.setMark)
 
     def send(self, index, isBlack):
         self.interactCell.emit(index, isBlack)
     
     def sendScore(self, whiteScore, blackScore):
         self.setScore.emit(whiteScore, blackScore)
+
+    def sendMark(self, isBlackTurn):
+        self.setMark.emit(isBlackTurn)
 
 class QTUI(UIBase):
     def xyToIndex(self, x, y):
@@ -62,11 +67,15 @@ class QTUI(UIBase):
                         emitter.send(index, False)
 
             elif (io["type"] == UIMessageType.SCORE):
-                print(io["data"]["o"], io["data"]["x"])
+                # print(io["data"]["o"], io["data"]["x"])
                 emitter.sendScore(io["data"]["o"], io["data"]["x"])
             elif (io["type"] == UIMessageType.TURN):
                 turn = io["data"]
-                print(f"Sekarang giliran {turn}")
+                # print(f"Sekarang giliran {turn}")
+                if turn == "x":
+                    emitter.sendMark(True)
+                else:
+                    emitter.sendMark(False)
             elif (io["type"] == UIMessageType.FORFEIT):
                 print("Tidak ada langkah mungkin, skip")
             elif (io["type"] == UIMessageType.DOTURN):
