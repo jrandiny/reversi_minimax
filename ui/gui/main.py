@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-# -*- conding: utf-8 -*-
 import sys
 import os
 import time

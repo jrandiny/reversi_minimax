@@ -21,7 +21,6 @@ Rectangle {
         cellWidth: 100; cellHeight: 100
         objectName:"boardGame"
         focus: true
-        // interactive: false
         
         model: [{posX:0,posY:0},{posX:0,posY:1},{posX:0,posY:2},{posX:0,posY:3},{posX:0,posY:4},{posX:0,posY:5},{posX:0,posY:6},{posX:0,posY:7},
                 {posX:1,posY:0},{posX:1,posY:1},{posX:1,posY:2},{posX:1,posY:3},{posX:1,posY:4},{posX:1,posY:5},{posX:1,posY:6},{posX:1,posY:7},
@@ -147,10 +146,7 @@ Rectangle {
 
     Row {
         id: scoreBoard
-        // wi
         anchors.top: boardGrid.bottom
-        // anchors.fill: parent
-        // spacing: 6
         Rectangle {
             color: "white"
             width: mainWindow.width/2
@@ -170,7 +166,6 @@ Rectangle {
                 font.family: "Helvetica"
                 font.pointSize: 24      
                 anchors.centerIn: parent
-                // text: "White : 5"
             }
 
             Rectangle{
@@ -219,8 +214,6 @@ Rectangle {
     }
 
     function setScore(_whiteScore, _blackScore){
-        // console.log(_whiteScore)
-        // console.log(_blackScore)
         whiteScore.text = "White : " + _whiteScore
         blackScore.text = "Black : " + _blackScore
     }
