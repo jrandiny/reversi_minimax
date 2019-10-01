@@ -23,7 +23,7 @@ class UICommandType(Enum):
 class UIPlayer(BotBase):
     def __init__(self, moveQueue, askForMove):
         self.askForMove = askForMove
-        self.moveQueue: Queue = moveQueue
+        self.moveQueue = moveQueue
 
     def getName(self, moveQueue):
         return "Player"

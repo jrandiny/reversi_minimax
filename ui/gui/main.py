@@ -20,11 +20,10 @@ class Handler(QObject):
 
     @Slot(int)
     def tileClicked(self, index):
-        # print({"xsss": index % 8, "ysss": index // 8})
         self.moveQueue.put({"x": index % 8, "y": index // 8})
 
 
-class uiClass(QObject):
+class ioObject(QObject):
     interactCell = Signal(int, bool)
     setScore = Signal(int, int)
     setMark = Signal(bool)
@@ -38,12 +37,13 @@ class uiClass(QObject):
 
     def send(self, index, isBlack):
         self.interactCell.emit(index, isBlack)
-    
+
     def sendScore(self, whiteScore, blackScore):
         self.setScore.emit(whiteScore, blackScore)
 
     def sendMark(self, isBlackTurn):
         self.setMark.emit(isBlackTurn)
+
 
 class QTUI(UIBase):
     def xyToIndex(self, x, y):
@@ -86,7 +86,7 @@ class QTUI(UIBase):
             self.inputQueue.task_done()
 
     def threadWorker(self):
-        self.app = QGuiApplication(sys.argv)
+        self.app = QGuiApplication()
         self.view = QQuickView()
         self.view.setResizeMode(QQuickView.SizeRootObjectToView)
 
@@ -95,20 +95,25 @@ class QTUI(UIBase):
         self.view.setSource(QUrl.fromLocalFile(os.path.abspath(qml_file)))
 
         root = self.view.rootObject()
-        # self.board = root.findChild(QObject, "boardGame")
 
-        handler = Handler(self.moveQueue)
+        ioHandler = Handler(self.moveQueue)
         context = self.view.rootContext()
-        context.setContextProperty("handler", handler)
-        # root.setWhiteScore(20)
+        context.setContextProperty("handler", ioHandler)
 
         #Show the window
         if self.view.status() == QQuickView.Error:
             sys.exit(-1)
 
-        threading.Thread(target=self.ioThread,
-                         args=(self.inputQueue, uiClass(root))).start()
+        ioSignaler = ioObject(root)
+
+        input_thread = threading.Thread(target=self.ioThread,
+                                        args=(self.inputQueue, ioSignaler))
+        input_thread.start()
 
         self.view.show()
         self.app.exec_()
-        del self.view
+
+        self.inputQueue.put({"type": UIMessageType.QUIT})
+        input_thread.join()
+        self.outputQueue.put({"type": UICommandType.QUIT})
+        self.moveQueue.put({"x": -1, "y": -1})

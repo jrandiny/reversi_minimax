@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # Tugas Besar Intelegensi Buatan #1
 # Tanggal   : Kamis, 12 Sept 2019
 # Deskripsi : back engine reversi
@@ -23,14 +24,12 @@ def game(players, board, ui):
     play = True
 
     while play:
-        ui.giveNewBoard(board)
         command = ui.getUICommand()
 
         if (command["type"] == UICommandType.QUIT):
-            play = False
-        elif (command["type"] == UICommandType.MOVE):
-            print(command["data"])
+            break
         else:
+            ui.giveNewBoard(board)
             ui.giveNewTurn(turn)
             score = countScore(board)
             ui.giveNewScore(score)
@@ -40,20 +39,17 @@ def game(players, board, ui):
                 turn = nextTurn(turn)
                 ui.giveForfeitTurn()
             else:
-                inputValid = False
+                masukan = players[turn].doMove(board, turn)
 
-                while not inputValid:
-                    masukan = players[turn].doMove(board, turn)
-
-                    if makeMove(board, turn, masukan["x"], masukan["y"]):
-                        inputValid = True
-                        turn = nextTurn(turn)
+                if makeMove(board, turn, masukan["x"], masukan["y"]):
+                    turn = nextTurn(turn)
 
             play = not isFinish(board, turn)
-    ui.giveNewBoard(board)
-    score = countScore(board)
-    ui.giveNewScore(score)
 
+            if not play:
+                ui.giveNewBoard(board)
+                score = countScore(board)
+                ui.giveNewScore(score)
 
 
 if __name__ == "__main__":
