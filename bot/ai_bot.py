@@ -1,12 +1,11 @@
 from bot_base import BotBase
 from utils import *
-import time
 import random
 
 DEPTH_FACTOR = 0
 
+
 class AIBot(BotBase):
-    
     def getName(self):
         return "Minimax bot"
 
@@ -18,12 +17,10 @@ class AIBot(BotBase):
         if len(availableMove) == 1:
             move = availableMove[0]
         else:
-            move = self.minimax(board, self.config["level"], -9999, 9999, turn)[1]
+            move = self.minimax(board, self.config["level"], -9999, 9999,
+                                turn)[1]
         x = move[0]
         y = move[1]
-        # self.moveList.append([x, y])
-        # print(f"bot bergerak [{x+1},{y+1}]")
-        # time.sleep(0.2)
         return {"x": x, "y": y}
 
     def evaluateState(self, board):
@@ -55,19 +52,14 @@ class AIBot(BotBase):
             for move in availableMove:
                 copy = copyBoard(board)
                 makeMove(copy, turn, move[0], move[1])
-                # if len(availableMove)
-                # if depth != 1:
-                #     value = self.minimax(copy, depth - 1, alpha, beta,
-                #                          nextTurn(turn))[0]
-                # else:
-                #     value = self.evaluateState(board)
+
                 value = self.minimax(copy, depth - 1, alpha, beta,
                                      nextTurn(turn))[0]
                 if value > maxEval:
                     maxEval = value
                     gerakan = move
                 elif value == maxEval:
-                    if(random.randint(1,10)%2 == 0):
+                    if (random.randint(1, 10) % 2 == 0):
                         gerakan = move
 
                 alpha = max(alpha, value)
@@ -76,22 +68,18 @@ class AIBot(BotBase):
             return [maxEval, gerakan]
         else:
             minEval = 9999
-            # print(turn + " availableMove " + str(availableMove))
+
             for move in availableMove:
                 copy = copyBoard(board)
                 makeMove(copy, turn, move[0], move[1])
-                # if depth != 1:
-                #     value = self.minimax(board, depth - 1, alpha, beta,
-                #                          nextTurn(turn))[0]
-                # else:
-                #     value = self.evaluateState(board)
+
                 value = self.minimax(board, depth - 1, alpha, beta,
                                      nextTurn(turn))[0]
                 if value < minEval:
                     minEval = value
                     gerakan = move
                 elif value == minEval:
-                    if(random.randint(1,10)%2 == 0):
+                    if (random.randint(1, 10) % 2 == 0):
                         gerakan = move
 
                 beta = min(beta, value)

@@ -53,7 +53,6 @@ class QTUI(UIBase):
         return (index % 8, index // 8)
 
     def ioThread(self, inputQueue, emitter):
-        # interactCell = Signal(int, int)
         while True:
             io = inputQueue.get()
 
@@ -65,13 +64,12 @@ class QTUI(UIBase):
                         emitter.send(index, True)
                     elif (item == WHITE):
                         emitter.send(index, False)
+                time.sleep(0.2)
 
             elif (io["type"] == UIMessageType.SCORE):
-                # print(io["data"]["o"], io["data"]["x"])
                 emitter.sendScore(io["data"]["o"], io["data"]["x"])
             elif (io["type"] == UIMessageType.TURN):
                 turn = io["data"]
-                # print(f"Sekarang giliran {turn}")
                 if turn == "x":
                     emitter.sendMark(True)
                 else:
@@ -79,7 +77,7 @@ class QTUI(UIBase):
             elif (io["type"] == UIMessageType.FORFEIT):
                 print("Tidak ada langkah mungkin, skip")
             elif (io["type"] == UIMessageType.DOTURN):
-                print('do turn')
+                pass
             elif (io["type"] == UIMessageType.QUIT):
                 break
 
