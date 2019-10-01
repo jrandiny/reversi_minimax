@@ -23,6 +23,13 @@ def game(players, board, ui):
     turn = BLACK
     play = True
 
+    ui.giveSetupSignal({
+        "player_name": {
+            BLACK: players[BLACK].getName(),
+            WHITE: players[WHITE].getName()
+        }
+    })
+
     while play:
         command = ui.getUICommand()
 
@@ -91,7 +98,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     benchmarkMode = args.loopCount > 1
-    config = {"level":args.level}
+    config = {"level": args.level}
 
     players = {}
 
@@ -102,7 +109,6 @@ if __name__ == "__main__":
             ui = QTUI()
         else:
             ui = ConsoleUI()
-
 
     if (args.white == "player"):
         players[WHITE] = ui.getPlayer()

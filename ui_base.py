@@ -7,11 +7,12 @@ from queue import Queue
 
 class UIMessageType(Enum):
     QUIT = 0
-    BOARD = 1
-    TURN = 2
-    SCORE = 3
-    FORFEIT = 4
-    DOTURN = 5
+    SETUP = 1
+    BOARD = 2
+    TURN = 3
+    SCORE = 4
+    FORFEIT = 5
+    DOTURN = 6
 
 
 class UICommandType(Enum):
@@ -25,7 +26,7 @@ class UIPlayer(BotBase):
         self.askForMove = askForMove
         self.moveQueue = moveQueue
 
-    def getName(self, moveQueue):
+    def getName(self):
         return "Player"
 
     def doMove(self, board, turn):
@@ -41,6 +42,9 @@ class UIBase(ABC):
         self.moveQueue = Queue()
         self.uiThread = threading.Thread(target=self.threadWorker)
         self.uiThread.start()
+
+    def giveSetupSignal(self, data):
+        self.inputQueue.put({"type": UIMessageType.SETUP, "data": data})
 
     def giveNewBoard(self, board):
         self.inputQueue.put({"type": UIMessageType.BOARD, "data": board})

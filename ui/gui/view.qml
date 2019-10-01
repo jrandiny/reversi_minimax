@@ -155,6 +155,14 @@ Rectangle {
             color: "white"
             width: mainWindow.width/2
             height: 100
+
+            Text {
+                id:whiteName
+                color: "black"
+                font.family: "Helvetica"
+                font.pointSize: 18 
+                anchors.horizontalCenter: parent.horizontalCenter                
+            }
             
             Text {
                 id:whiteScore
@@ -180,6 +188,14 @@ Rectangle {
             color: "black"
             width: mainWindow.width/2
             height: 100
+
+            Text {
+                id:blackName
+                color: "white"
+                font.family: "Helvetica"
+                font.pointSize: 18 
+                anchors.horizontalCenter: parent.horizontalCenter                
+            }
             
             Text {
                 id:blackScore
@@ -187,7 +203,6 @@ Rectangle {
                 font.family: "Helvetica"
                 font.pointSize: 24      
                 anchors.centerIn: parent
-                // text: "Black : 10"
             }
 
             Rectangle{
@@ -218,6 +233,11 @@ Rectangle {
             blackMark.color = "black"
             whiteMark.color = "black"
         }
+    }
+
+    function setName(white, black){
+        blackName.text = `- ${black} -`;
+        whiteName.text = `- ${white} -`;
     }
     
 }

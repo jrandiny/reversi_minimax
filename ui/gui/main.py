@@ -27,6 +27,7 @@ class ioObject(QObject):
     interactCell = Signal(int, bool)
     setScore = Signal(int, int)
     setMark = Signal(bool)
+    setName = Signal(str, str)
 
     def __init__(self, root):
         super().__init__()
@@ -34,6 +35,7 @@ class ioObject(QObject):
         self.interactCell.connect(board.interactCell)
         self.setScore.connect(root.setScore)
         self.setMark.connect(root.setMark)
+        self.setName.connect(root.setName)
 
     def send(self, index, isBlack):
         self.interactCell.emit(index, isBlack)
@@ -43,6 +45,9 @@ class ioObject(QObject):
 
     def sendMark(self, isBlackTurn):
         self.setMark.emit(isBlackTurn)
+
+    def sendName(self, whiteName, blackName):
+        self.setName.emit(whiteName, blackName)
 
 
 class QTUI(UIBase):
@@ -56,7 +61,10 @@ class QTUI(UIBase):
         while True:
             io = inputQueue.get()
 
-            if (io["type"] == UIMessageType.BOARD):
+            if (io["type"] == UIMessageType.SETUP):
+                player = io["data"]["player_name"]
+                emitter.sendName(player[WHITE], player[BLACK])
+            elif (io["type"] == UIMessageType.BOARD):
                 for index in range(0, 64):
                     col, row = self.indexToXY(index)
                     item = io["data"][row][col]
