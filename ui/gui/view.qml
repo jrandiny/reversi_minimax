@@ -5,8 +5,10 @@ import QtQuick.Layouts 1.13
 Rectangle {
     id:mainWindow
     width: 800
-    height: 900
+    height: 800/aspect
     color: "white"
+
+    readonly property double aspect: 8/9
 
     property int dim: 8
 
@@ -133,12 +135,13 @@ Rectangle {
         }
 
         onWidthChanged: {
-            let minSize = mainWindow.height<mainWindow.height?mainWindow.height:mainWindow.width;
-            mainWindow.height=minSize;
-            mainWindow.width=minSize;
             boardGrid.cellWidth = boardGrid.width/mainWindow.dim;
-            boardGrid.cellHeight = cellWidth;            
-            // console.log("width change")
+            boardGrid.cellHeight = cellWidth;
+
+            const delta = mainWindow.height - 100 - mainWindow.width;
+
+            boardGrid.topMargin = delta/2;
+            boardGrid.height = mainWindow.height - 100;          
         }
     }
 
