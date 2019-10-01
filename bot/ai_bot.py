@@ -1,14 +1,12 @@
 from bot_base import BotBase
 from utils import *
+import time
+import random
 
+DEPTH_FACTOR = 0
 
 class AIBot(BotBase):
-    moveList = []
-    count = 0
-
-    def init(self):
-        self.moveList = []
-
+    
     def getName(self):
         return "Minimax bot"
 
@@ -20,14 +18,15 @@ class AIBot(BotBase):
         if len(availableMove) == 1:
             move = availableMove[0]
         else:
-            move = self.minimax(board, 3, -9999, 9999, turn)[1]
+            move = self.minimax(board, self.config["level"], -9999, 9999, turn)[1]
         x = move[0]
         y = move[1]
-        self.moveList.append([x, y])
+        # self.moveList.append([x, y])
         # print(f"bot bergerak [{x+1},{y+1}]")
+        # time.sleep(0.2)
         return {"x": x, "y": y}
 
-    def evaluateState(self, board, turn):
+    def evaluateState(self, board):
         skor = countScore(board)
         posValue = self.hitungPositionValue(board)
         value = (skor[WHITE] - skor[BLACK]) * SKOR_FACTOR
@@ -47,11 +46,10 @@ class AIBot(BotBase):
         return {WHITE: valuePutih, BLACK: valueHitam}
 
     def minimax(self, board, depth, alpha, beta, turn):
-        self.count += 1
         availableMove = getAvailableMove(board, turn)
 
         if depth == 0 or len(availableMove) == 0:
-            return [self.evaluateState(board, turn), INVALID_MOVE]
+            return [self.evaluateState(board), INVALID_MOVE]
         elif turn == WHITE:
             maxEval = -9999
             for move in availableMove:
@@ -65,9 +63,12 @@ class AIBot(BotBase):
                 #     value = self.evaluateState(board)
                 value = self.minimax(copy, depth - 1, alpha, beta,
                                      nextTurn(turn))[0]
-                if value >= maxEval:
+                if value > maxEval:
                     maxEval = value
                     gerakan = move
+                elif value == maxEval:
+                    if(random.randint(1,10)%2 == 0):
+                        gerakan = move
 
                 alpha = max(alpha, value)
                 if beta <= alpha:
@@ -86,9 +87,12 @@ class AIBot(BotBase):
                 #     value = self.evaluateState(board)
                 value = self.minimax(board, depth - 1, alpha, beta,
                                      nextTurn(turn))[0]
-                if value <= minEval:
+                if value < minEval:
                     minEval = value
                     gerakan = move
+                elif value == minEval:
+                    if(random.randint(1,10)%2 == 0):
+                        gerakan = move
 
                 beta = min(beta, value)
                 if beta <= alpha:

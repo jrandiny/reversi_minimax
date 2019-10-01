@@ -1,7 +1,7 @@
 from bot_base import BotBase
 from utils import *
 import random
-
+import time
 
 class Bot2(BotBase):
     def getName(self):
@@ -31,6 +31,7 @@ class Bot2(BotBase):
             if score > bestScore:
                 bestMove = [x, y]
                 bestScore = score
+        time.sleep(0.2)
         return {"x": bestMove[0], "y": bestMove[1]}
 
     def isOnCorner(self, x, y):

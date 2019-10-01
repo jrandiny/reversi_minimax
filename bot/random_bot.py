@@ -1,7 +1,7 @@
 from bot_base import BotBase
 from utils import *
 import random
-
+import time
 
 class RandomBot(BotBase):
     def getName(self):
@@ -17,4 +17,5 @@ class RandomBot(BotBase):
         x = terpilih[0]
         y = terpilih[1]
         # print(f"bot bergerak [{x+1},{y+1}]")
+        time.sleep(0.2)
         return {"x": x, "y": y}
