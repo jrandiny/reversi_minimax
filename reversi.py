@@ -92,8 +92,8 @@ if __name__ == "__main__":
                         type=int,
                         nargs="?",
                         metavar="N",
-                        default=3,
-                        help="Determine bot level (default: 4)")
+                        default=1,
+                        help="Determine bot level (default: 1)")
 
     args = parser.parse_args()
 
