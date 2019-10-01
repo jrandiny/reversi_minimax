@@ -4,8 +4,8 @@ from abc import ABC, abstractmethod
 class BotBase(ABC):
 
     # init
-    def init(self):
-        pass
+    def __init__(self, config):
+        self.config = config
 
     @abstractmethod
     def getName(self):
