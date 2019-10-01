@@ -2,7 +2,7 @@ from bot_base import BotBase
 from utils import *
 import random
 
-DEPTH_FACTOR = 0
+LEVEL_DEPTH = [5, 3, 2]
 
 
 class AIBot(BotBase):
@@ -17,8 +17,8 @@ class AIBot(BotBase):
         if len(availableMove) == 1:
             move = availableMove[0]
         else:
-            move = self.minimax(board, self.config["level"], -9999, 9999,
-                                turn)[1]
+            move = self.minimax(board, LEVEL_DEPTH[self.config["level"] - 1],
+                                -9999, 9999, turn)[1]
         x = move[0]
         y = move[1]
         return {"x": x, "y": y}
