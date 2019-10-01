@@ -84,9 +84,18 @@ if __name__ == "__main__":
                         const=True,
                         help="Using GUI?")
 
+    parser.add_argument("--level",
+                        dest="level",
+                        type=int,
+                        nargs="?",
+                        metavar="N",
+                        default=3,
+                        help="Determine bot level (default: 4)")
+
     args = parser.parse_args()
 
     benchmarkMode = args.loopCount > 1
+    config = {"level":args.level}
 
     players = {}
 
@@ -98,19 +107,22 @@ if __name__ == "__main__":
         else:
             ui = ConsoleUI()
 
-    if (benchmarkMode):
+
+    if (args.white == "player"):
+        players[WHITE] = ui.getPlayer()
+    else:
         aiWhiteName = args.white.split("/")
         aiWhiteModule = importlib.import_module("bot." + aiWhiteName[0])
         aiWhiteClass = getattr(aiWhiteModule, aiWhiteName[1])
-        players[WHITE] = aiWhiteClass()
+        players[WHITE] = aiWhiteClass(config)
 
+    if (args.black == "player"):
+        players[BLACK] = ui.getPlayer()
+    else:
         aiBlackName = args.black.split("/")
         aiBlackModule = importlib.import_module("bot." + aiBlackName[0])
         aiBlackClass = getattr(aiBlackModule, aiBlackName[1])
-        players[BLACK] = aiBlackClass()
-    else:
-        players[WHITE] = RandomBot()
-        players[BLACK] = ui.getPlayer()
+        players[BLACK] = aiBlackClass(config)
 
     blackWin = 0
     whiteWin = 0
